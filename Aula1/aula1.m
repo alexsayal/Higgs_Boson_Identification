@@ -20,7 +20,7 @@ zlabel(col_names(3))
 %% Plot 2
 data2.X=xls_data(:,[6,10])';
 data2.y=xls_data(:,2)';
-data2.dim=size(data2.X,1);
+data2.dim=size(data2.X,1); %Data features = 2
 data2.num_data=size(data2.X,2); data.name='Cork Stoppers dataset 2';
 
 figure();
