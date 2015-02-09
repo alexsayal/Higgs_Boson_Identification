@@ -5,7 +5,7 @@
 [xls_data,col_names]=xlsread('CORK_STOPPERS.XLS','Data');
 
 %% Sets
-data.X=xls_data(:,3:end)'; %Transpose for Tools % Data itself
+data.X=xls_data(:,3:end)'; %Transpose for STPRTools % Data itself
 data.y=xls_data(:,2)'; %Class
 data.dim=size(data.X,1); %Data features = 12
 data.num_data=size(data.X,2); data.name='Cork Stoppers dataset'; %Data dimension = 150
