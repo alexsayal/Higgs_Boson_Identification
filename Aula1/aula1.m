@@ -1,5 +1,7 @@
-%%% TECNICAS RECONHECIMENTO PADROES %%%
-%%% AULA 1 %%%
+%%%%% = Técnicas de Reconhecimento de Padrões = %%%%%
+%%%%% ================= Aula 2 ================ %%%%%
+%%%%% ================== 2015 ================= %%%%%
+
 
 %% Load
 [xls_data,col_names]=xlsread('CORK_STOPPERS.XLS','Data');
