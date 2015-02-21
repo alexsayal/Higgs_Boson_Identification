@@ -2,11 +2,17 @@
 %%%%% ================= Aula 2 ================ %%%%%
 %%%%% ================== 2015 ================= %%%%%
 
-%% Load Directories
+%% Load Directories Alex
 apples = dir('/Users/alexandresayal/Desktop/MATLAB_TRP/Aula2/FRUITS/APPLES/*.JPG');
 peaches = dir('/Users/alexandresayal/Desktop/MATLAB_TRP/Aula2/FRUITS/PEACHES/*.JPG');
 oranges = dir('/Users/alexandresayal/Desktop/MATLAB_TRP/Aula2/FRUITS/ORANGES/*.JPG');
 main_dir = '/Users/alexandresayal/Desktop/MATLAB_TRP/Aula2/FRUITS';
+
+%% Load Directories Sara
+apples=dir('C:\Users\sara\Documents\MATLAB\TRP\Aula2\FRUITS\APPLES\*.jpg');
+oranges=dir('C:\Users\sara\Documents\MATLAB\TRP\Aula2\FRUITS\ORANGES\*.jpg');
+peaches=dir('C:\Users\sara\Documents\MATLAB\TRP\Aula2\FRUITS\PEACHES\*.jpg');
+main_dir='C:\Users\sara\Documents\MATLAB\TRP\Aula2\FRUITS';
 
 %% Apples
 for i=1:length(apples)
@@ -30,7 +36,7 @@ for i=1:length(apples)
    subplot(1,4,3); imhist(blue); title('Blue Channel');
 
    A_bw = rgb2gray(A);
-   B = decorrstretch(A_bw);
+   %B = decorrstretch(A_bw);
    %A_bw = A;
    
    B = imsharpen(A_bw);
