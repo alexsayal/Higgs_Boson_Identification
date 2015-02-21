@@ -12,7 +12,7 @@ main_dir = '/Users/alexandresayal/Desktop/MATLAB_TRP/Aula2/FRUITS';
 for i=1:length(apples)
    A=imread(strcat(main_dir,'/APPLES/',apples(i).name));
    
-   [c,l,z] = size(A);
+   [c,l,z] = size(A); %Comprimento, Largura, Channels
    window_c = floor(c/2-0.25*c):floor(c/2+0.25*c);
    window_l = floor(l/2-0.25*l):floor(l/2+0.25*l);
    
@@ -20,6 +20,7 @@ for i=1:length(apples)
    green = A(window_c,window_l,2);
    blue = A(window_c,window_l,3);
    
+   %Extreme values of each channel
    M_red = [min(min(red)) max(max(red))];
    M_green = [min(min(green)) max(max(green))];
    M_blue = [min(min(blue)) max(max(blue))];
