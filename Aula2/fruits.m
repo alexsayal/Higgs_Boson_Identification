@@ -9,10 +9,13 @@ oranges = dir('/Users/alexandresayal/Desktop/MATLAB_TRP/Aula2/FRUITS/ORANGES/*.J
 main_dir = '/Users/alexandresayal/Desktop/MATLAB_TRP/Aula2/FRUITS';
 
 %% Load Directories Sara
-apples=dir('C:\Users\sara\Documents\MATLAB\TRP\Aula2\FRUITS\APPLES\*.jpg');
-oranges=dir('C:\Users\sara\Documents\MATLAB\TRP\Aula2\FRUITS\ORANGES\*.jpg');
-peaches=dir('C:\Users\sara\Documents\MATLAB\TRP\Aula2\FRUITS\PEACHES\*.jpg');
-main_dir='C:\Users\sara\Documents\MATLAB\TRP\Aula2\FRUITS';
+% apples=dir('C:\Users\sara\Documents\MATLAB\TRP\Aula2\FRUITS\APPLES\*.jpg');
+% oranges=dir('C:\Users\sara\Documents\MATLAB\TRP\Aula2\FRUITS\ORANGES\*.jpg');
+% peaches=dir('C:\Users\sara\Documents\MATLAB\TRP\Aula2\FRUITS\PEACHES\*.jpg');
+% main_dir='C:\Users\sara\Documents\MATLAB\TRP\Aula2\FRUITS';
+
+%% DataSet
+
 
 %% Apples
 for i=1:length(apples)
@@ -26,42 +29,32 @@ for i=1:length(apples)
    green = A(window_c,window_l,2);
    blue = A(window_c,window_l,3);
    
-   %Extreme values of each channel
-   M_red = [min(min(red)) max(max(red))];
-   M_green = [min(min(green)) max(max(green))];
-   M_blue = [min(min(blue)) max(max(blue))];
+   % Histograms
+   [C1,L1] = imhist(red);
+   [C2,L2] = imhist(green);
+   [C3,L3] = imhist(blue);
+   
+   % Extreme values of each channel
+   M_red = [min(min(red)) max(max(red)) L1(C1==max(C1))];
+   M_green = [min(min(green)) max(max(green)) L2(C2==max(C2))];
+   M_blue = [min(min(blue)) max(max(blue)) L3(C3==max(C3))];
+   
+   % Ratios
+   R1 = M_red(3)/M_green(3)
+   R2 = M_red(3)/M_blue(3)
+   
    
    subplot(1,4,1); imhist(red); title('Red Channel');
    subplot(1,4,2); imhist(green); title('Green Channel');
    subplot(1,4,3); imhist(blue); title('Blue Channel');
 
    A_bw = rgb2gray(A);
-   %B = decorrstretch(A_bw);
-   %A_bw = A;
    
    B = imsharpen(A_bw);
    B = imadjust(B);
    B = im2bw(B);
+   
    subplot(1,4,4); imshow(B);
-   
-%    threshold = graythresh(A_bw);
-%    A_bw2 = im2bw(A_bw,threshold);
-%    se = strel('disk',2);
-%    A_bw2 = imclose(A_bw2,se);
-%    A_bw2 = imfill(A_bw2,'holes');
-%    
-%    [B,L] = bwboundaries(A_bw2,'noholes');
-% 
-%    subplot(1,4,4); imshow(label2rgb(L, @jet, [.5 .5 .5]))
-%    hold on
-%    for k = 1:length(B)
-%        boundary = B{k};
-%        subplot(1,4,4); plot(boundary(:,2), boundary(:,1), 'w', 'LineWidth', 2)
-%    end
-   
-   %A_bw2 = im2bw(A_bw);
-   %subplot(1,4,4); imshow(A_bw2); 
-   %subplot(1,4,4); imcontour(A_bw,3); 
    
    pause;
    hold off
