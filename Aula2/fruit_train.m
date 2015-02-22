@@ -17,7 +17,7 @@ F = zeros(64,5); % #Im , Class , R colour , R1 Altura , R2 Largura %
 for i=1:length(fruits)
     % ------ Image ------
     A=imread(strcat(main_dir,fruits(i).name));
-    [c,l,z] = size(A); %Altura, Largura, Channels
+    [a,l,z] = size(A); %Altura, Largura, Channels
     
     % ------ Classe ------
     F(i,1) = i;
@@ -32,41 +32,43 @@ for i=1:length(fruits)
     % ------ Forma ------
     A_g = rgb2hsv(A);
     
-    threshold = 0.40;
-    A_BW = im2bw(A_g(:,:,2),threshold);
+    A_BW = im2bw(A_g(:,:,2),0.4);
     
     aux = zeros(l,1);
-    aux2 = zeros(c,1);
+    aux2 = zeros(a,1);
+    M_altura = zeros(3,1);
+    M_largura = zeros(3,1);
+    ind = zeros(2,1);
     
     % Altura
     for ii = 1:l
         aux(ii) = sum(A_BW(:,ii));
     end
     
-    [M_altura,ind] = max(aux);
-    M_altura2 = aux(ind-50);
-    M_altura3 = aux(ind+50);
+    [M_altura(1),ind(1)] = max(aux);
+    M_altura(2) = aux(ind(1)-50);
+    M_altura(3) = aux(ind(1)+50);
     
     % Largura
-    for ii = 1:c
+    for ii = 1:a
         aux2(ii) = sum(A_BW(ii,:));
     end
     
-    [M_largura,ind2] = max(aux2);
-    M_largura2 = aux(ind2-50);
-    M_largura3 = aux(ind2+50);
+    [M_largura(1),ind(2)] = max(aux2);
+    M_largura(2) = aux(ind(2)-50);
+    M_largura(3) = aux(ind(2)+50);
     
     % Ratios
-    F(i,4) = M_altura + M_altura2 + M_altura3;
-    F(i,5) = M_largura + M_largura2 + M_largura3;
+    F(i,4) = M_altura(1) + M_altura(2) + M_altura(3);
+    F(i,5) = M_largura(1) + M_largura(2) + M_largura(3);
     
     % ------ Cor ------
-    window_c = floor(c/2-0.25*c):floor(c/2+0.25*c);
+    window_a = floor(a/2-0.25*a):floor(a/2+0.25*a);
     window_l = floor(l/2-0.25*l):floor(l/2+0.25*l);
     
-    red = A(window_c,window_l,1);
-    green = A(window_c,window_l,2);
-    blue = A(window_c,window_l,3);
+    red = A(window_a,window_l,1);
+    green = A(window_a,window_l,2);
+    blue = A(window_a,window_l,3);
     
     % Histograms
     [C1,L1] = imhist(red);
@@ -81,3 +83,7 @@ for i=1:length(fruits)
     % Ratio
     F(i,3) = M_red(1)/M_green(1);
 end
+
+%% Export
+
+% csvwrite('fruit_features.csv',F);
