@@ -49,18 +49,17 @@ for i=1:length(fruits)
     M_altura(2) = aux(ind(1)-50);
     M_altura(3) = aux(ind(1)+50);
     
-    % Largura
-    for ii = 1:a
-        aux2(ii) = sum(A_BW(ii,:));
-    end
-    
-    [M_largura(1),ind(2)] = max(aux2);
-    M_largura(2) = aux(ind(2)-50);
-    M_largura(3) = aux(ind(2)+50);
+%     % Largura
+%     for ii = 1:a
+%         aux2(ii) = sum(A_BW(ii,:));
+%     end
+%     
+%     [M_largura(1),ind(2)] = max(aux2);
+%     M_largura(2) = aux(ind(2)-50);
+%     M_largura(3) = aux(ind(2)+50);
     
     % Ratios
     F(i,4) = M_altura(1) + M_altura(2) + M_altura(3);
-    F(i,5) = M_largura(1) + M_largura(2) + M_largura(3);
     
     % ------ Cor ------
     window_a = floor(a/2-0.25*a):floor(a/2+0.25*a);
@@ -88,7 +87,6 @@ end
 figure('units','centimeters','position',[5 5 45 15]);
 subplot(1,3,1); plot(F(:,3),'-o'); title('Ratio Cor'); line([19 19],[min(F(:,3)) max(F(:,3))],'Color','r'); line([31 31],[min(F(:,3)) max(F(:,3))],'Color','r');
 subplot(1,3,2); plot(F(:,4),'-o'); title('Ratio Forma 1'); line([19 19],[min(F(:,4)) max(F(:,4))],'Color','r'); line([31 31],[min(F(:,4)) max(F(:,4))],'Color','r');
-subplot(1,3,3); plot(F(:,5),'-o'); title('Ratio Forma 2'); line([19 19],[min(F(:,5)) max(F(:,5))],'Color','r'); line([31 31],[min(F(:,5)) max(F(:,5))],'Color','r');
 
 %% Export
 
