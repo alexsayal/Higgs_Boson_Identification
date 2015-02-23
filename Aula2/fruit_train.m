@@ -84,6 +84,12 @@ for i=1:length(fruits)
     F(i,3) = M_red(1)/M_green(1);
 end
 
+%% Plots
+figure('units','centimeters','position',[5 5 45 15]);
+subplot(1,3,1); plot(F(:,3),'-o'); title('Ratio Cor'); line([19 19],[min(F(:,3)) max(F(:,3))],'Color','r'); line([31 31],[min(F(:,3)) max(F(:,3))],'Color','r');
+subplot(1,3,2); plot(F(:,4),'-o'); title('Ratio Forma 1'); line([19 19],[min(F(:,4)) max(F(:,4))],'Color','r'); line([31 31],[min(F(:,4)) max(F(:,4))],'Color','r');
+subplot(1,3,3); plot(F(:,5),'-o'); title('Ratio Forma 2'); line([19 19],[min(F(:,5)) max(F(:,5))],'Color','r'); line([31 31],[min(F(:,5)) max(F(:,5))],'Color','r');
+
 %% Export
 
 % csvwrite('fruit_features.csv',F);
