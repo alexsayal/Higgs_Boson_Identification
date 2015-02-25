@@ -13,20 +13,21 @@ id = raw_data(:,257:end);
 clear raw_data;
 
 %% Visualize
-for i=1:length(data)
-    A = vec2mat(data(i,:),16);
-    imagesc(A);
-    pause;
-end
+% for i=1:length(data)
+%     A = vec2mat(data(i,:),16);
+%     imagesc(A);
+%     pause;
+% end
 
-%% Feature Extraction
-
+%% Matrix
 M=zeros(l,5);
 M(:,1)=1:l;
 [~,b]=find(id==1);
 M(:,2)=b-1;
 
-% ------ Percent pixels above & below horizontal -------
+% = Feature Extraction = %
+
+%% ------ Percent pixels above & below horizontal -------
 P_above = zeros(1,length(data));
 P_below = zeros(1,length(data));
 for i=1:length(data)
@@ -41,8 +42,10 @@ end
 media_P_above = mean(P_above);
 media_P_below = mean(P_below);
 
-M(:,3)=P_above./P_below;
+M(:,3)=P_above-P_below;
+%M(:,3) = P_below;
 
+figure();
 plot(P_above,'o'); line([0 1593],[media_P_above media_P_above],'Color','g');
 hold on;
 plot(P_below,'*r'); line([0 1593],[media_P_below media_P_below],'Color','g');
@@ -62,8 +65,10 @@ end
 media_P_left = mean(P_left);
 media_P_right = mean(P_right);
 
-M(:,4)=P_left./P_right;
+M(:,4)=P_left-P_right;
+%M(:,4)= P_right;
 
+figure();
 plot(P_left,'o'); line([0 1593],[media_P_left media_P_left],'Color','g');
 hold on;
 plot(P_right,'*r'); line([0 1593],[media_P_right media_P_right],'Color','g');
@@ -80,14 +85,20 @@ end
 
 M(:,5)=mean_dist;
 
+figure();
 plot(mean_dist,'o');
+
+%% ------ Regions ------ %%
+
+% To be explored
 
 %% ------ STPR Tool ------
 
-dados.X=M(:,3:end);
+dados.X=M(:,3:end)';
 dados.y=M(:,2)';
 dados.dim=size(dados.X,1);
 dados.num_data=size(dados.X,2);
 
+figure();
 ppatterns(dados);
   
