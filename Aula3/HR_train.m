@@ -7,6 +7,7 @@
 raw_data = importdata('semeion.data');
 
 data = raw_data(:,1:256);
+[l,c]=size(data);
 id = raw_data(:,257:end);
 
 clear raw_data;
@@ -19,6 +20,11 @@ for i=1:length(data)
 end
 
 %% Feature Extraction
+
+M=zeros(l,5);
+M(:,1)=1:l;
+[~,b]=find(id==1);
+M(:,2)=b-1;
 
 % ------ Percent pixels above & below horizontal -------
 P_above = zeros(1,length(data));
@@ -34,6 +40,9 @@ for i=1:length(data)
 end
 media_P_above = mean(P_above);
 media_P_below = mean(P_below);
+
+M(:,3)=P_above./P_below;
+
 plot(P_above,'o'); line([0 1593],[media_P_above media_P_above],'Color','g');
 hold on;
 plot(P_below,'*r'); line([0 1593],[media_P_below media_P_below],'Color','g');
@@ -52,6 +61,33 @@ for i=1:length(data)
 end
 media_P_left = mean(P_left);
 media_P_right = mean(P_right);
+
+M(:,4)=P_left./P_right;
+
 plot(P_left,'o'); line([0 1593],[media_P_left media_P_left],'Color','g');
 hold on;
 plot(P_right,'*r'); line([0 1593],[media_P_right media_P_right],'Color','g');
+
+%% ------ Average distance to center ------
+center=[8,8];
+mean_dist=zeros(1,length(data));
+
+for i=1:length(data)
+    A = vec2mat(data(i,:),16);
+    [j,k]=find(A==1);
+    mean_dist(i)=euclidean_dist(center,[j,k]);
+end
+
+M(:,5)=mean_dist;
+
+plot(mean_dist,'o');
+
+%% ------ STPR Tool ------
+
+dados.X=M(:,3:end);
+dados.y=M(:,2)';
+dados.dim=size(dados.X,1);
+dados.num_data=size(dados.X,2);
+
+ppatterns(dados);
+  
