@@ -44,29 +44,4 @@ disp(strcat('Kurtosis for PRT = ',num2str(kurtosis(data(3,:))-3)));
 
 %% Cardiocenas
 
-[card_raw, card_names]=xlsread('CTG.xls','Data');
 
-card=card_raw(:,3:25)';
-card_names=card_names(1,6:28)';
-y=card_raw(:,36)';
-clear raw_data
-dim=size(card,1);
-
-
-%% 
-rank = zeros(10,dim);
-chi2 = zeros(1,dim);
-for i=1:dim
-    [p,tbl,stats] = kruskalwallis(card(i,:),y,'off');
-    
-    rank(:,i) = stats.meanranks;
-    chi2(i) = tbl{2,5};
-end
-
-%%
-[chi2_sort, ind]=sort(chi2,'descend');
-card_names_sort=card_names(ind);
-chi2_sort=chi2_sort(2:end);
-card_names_sort=card_names_sort(2:end);
-
-plot(chi2_sort,'--o')
