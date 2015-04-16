@@ -7,10 +7,13 @@ load higgs_data.mat
 %% Initial config
 [rownum,colnum] = size(data);
 data(data==-999) = NaN;
-raw_data(raw_data==-999) = NaN;
+
+%% Balance
+balance_decay = length(labels(labels==1))*100 / (length(labels(labels==2))+length(labels(labels==1)));
+balance_background = 100-balance_decay;
 
 %% Missing values
-option = 3;
+option = 1;
 
 %----Option 1 - Replace for column mean----%
 if option==1
@@ -69,8 +72,10 @@ end
     
 % end
 
-%% Feature Selection (Dimension reduction)
+%% Normalization
 normdata = scalestd(data);
+
+%% Feature Selection (Dimension reduction)
 option = 2;
 
 switch option
@@ -99,10 +104,10 @@ switch option
         [chi2_sort,ord] = sort(chi2,'descend');
         KWcolumn_names = column_names(ord);
         
-%         table(:,1) = cellstr(KWcolumn_names);
-%         table(:,2) = num2cell(chi2_sort);
-%         disp('Features Rank:');
-%         disp(table);
+        table(:,1) = cellstr(KWcolumn_names);
+        table(:,2) = num2cell(chi2_sort);
+        disp('Features Rank:');
+        disp(table);
         
         chi22 = chi2(chi2>=0.05*sum(chi2)); % 95%
         normdata = normdata(:,ord(1:length(chi22)));
