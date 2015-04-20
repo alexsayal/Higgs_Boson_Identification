@@ -13,14 +13,15 @@ balance_decay = length(labels(labels==1))*100 / (length(labels(labels==2))+lengt
 balance_background = 100-balance_decay;
 
 %% Missing values
+MVdata = data;
 option = 1;
 
 %----Option 1 - Replace for column mean----%
 if option==1
     for i=1:colnum
-        aux = data(:,i);
+        aux = MVdata(:,i);
         aux(isnan(aux)) = nanmean(aux);
-        data(:,i) = aux;
+        MVdata(:,i) = aux;
     end
     clear aux;
 end
@@ -28,9 +29,9 @@ end
 %----Option 2 - Replace for column mode----%
 if option==2
     for i=1:colnum
-        aux = data(:,i);
+        aux = MVdata(:,i);
         aux(isnan(aux)) = mode(aux);
-        data(:,i) = aux;
+        MVdata(:,i) = aux;
     end
     clear aux;
 end
@@ -40,19 +41,23 @@ if option==3
     i=rownum;
     ind = [];
     while i>=1
-       if sum(isnan(data(i,:)))==0
+       if sum(isnan(MVdata(i,:)))==0
           ind = [ind  i];
        end
        i=i-1;
     end
-    data = data(ind,:);
+    MVdata = MVdata(ind,:);
     labels = labels(ind);
     rownum = length(ind);
 end
 
+% %----Option 4 - Nearest-neighbor method----%
+% if option==4
+%     MVdata = knnimpute(MVdata(1:600,:)');
+% end
 
-%----Option 3 - Linear Regression----%
-% if option==3
+% %----Option 4 - Linear Regression----%
+% if option==4
 %     missingColumns = find(sum(isnan(data))~=0);
 %     nonmissingColumns = find(sum(isnan(data))==0);
 %     max=zeros(length(missingColumns),1);
@@ -62,21 +67,23 @@ end
 %         for i=nonmissingColumns
 %             aux = data(:,missingColumns(j));
 %             [a,b] = corr(aux(~isnan(aux)),data(~isnan(aux),i));
-%             if(b>max(j))
-%                 max(j) = b;
+%             
+%             if(a>max(j))
+%                 max(j) = a;
 %                 ind(j) = i;
 %             end
 %         end
 %     end
-    
-    
+%     
+%     
+%     
 % end
 
 %% Normalization
-normdata = scalestd(data);
+normdata = scalestd(MVdata);
 
 %% Feature Selection (Dimension reduction)
-option = 1;
+option = 3;
 
 switch option
     %----PCA----%
@@ -92,9 +99,8 @@ switch option
         end
         
         PCAnormdata = normdata*coeff.W(:,1:length(eig));
-        %PCAcolumn_names = column_names(ord(1:length(eig2)));
         
-        %----Kruskal-Wallis----%
+    %----Kruskal-Wallis----%
     case 2
         rank = zeros(2,colnum);
         chi2 = zeros(1,colnum);
@@ -115,4 +121,10 @@ switch option
         
         chi22 = chi2(chi2>=0.05*sum(chi2)); % 95%
         normdata = normdata(:,ord(1:length(chi22)));
+        
+     %----Correlation----%   
+    case 3
+        RHO = corr(normdata);
+        RHO(RHO==0) = -10;
+        [maxcor,indmax] = max(RHO);
 end
