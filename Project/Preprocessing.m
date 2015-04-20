@@ -76,19 +76,23 @@ end
 normdata = scalestd(data);
 
 %% Feature Selection (Dimension reduction)
-option = 2;
+option = 1;
 
 switch option
     %----PCA----%
     case 1
         coeff = pca(normdata');
         
-        [eig , ord] = sort(coeff.eigval,'descend');
+        max = 0.95*sum(coeff.eigval); % 95%
+        eig = [];
+        i = 1;
+        while(sum(eig)<=max)
+            eig = [eig ; coeff.eigval(i)];
+            i=i+1;
+        end
         
-        eig2 = eig(eig>=0.05*sum(eig)); % 95%
-        
-        normdata = normdata(:,ord(1:length(eig2)));
-        PCAcolumn_names = column_names(ord(1:length(eig2)));
+        PCAnormdata = normdata*coeff.W(:,1:length(eig));
+        %PCAcolumn_names = column_names(ord(1:length(eig2)));
         
         %----Kruskal-Wallis----%
     case 2
