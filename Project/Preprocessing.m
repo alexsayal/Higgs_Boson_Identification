@@ -1,130 +1,88 @@
-%% Import
-clear
-clc
-load higgs_data.mat
-[labels,eventID,column_names,data] = dataimport( higgs_data_for_optimization , column_names);
+%%%%% ====== Pattern Recognition Techniques ===== %%%%%
+%%%%% ===== Alexandre Sayal | Sara Oliveira ===== %%%%%
+%%%%% =================== 2015 ================== %%%%%
+%%%%% =========== Project Preprocessing ========= %%%%%
 
-%% Initial config
-[rownum,colnum] = size(data);
-data(data==-999) = NaN;
+%% Import Data
+clear, clc;
 
-%% Balance
-balance_decay = length(labels(labels==1))*100 / (length(labels(labels==2))+length(labels(labels==1)));
-balance_background = 100-balance_decay;
+load higgs_data.mat;
+
+[labels,eventID,column_names,data,testdata,testlabels] = dataimport( higgs_data_for_optimization , column_names);
+
+clear higgs_data_for_optimization;
+
+%% Balance between decay and background events
+balance = zeros(2,1);
+balance(1) = length(labels(labels==1))*100 / (length(labels(labels==2))+length(labels(labels==1)));
+balance(2) = 100-balance(1);
+figure();
+    pie(balance);
+    title('Class distribution of original data');
+    legend('Decay','Background');
 
 %% Missing values
-MVdata = data;
-option = 1;
+method = {'mean','mode','remove'};
 
-%----Option 1 - Replace for column mean----%
-if option==1
-    for i=1:colnum
-        aux = MVdata(:,i);
-        aux(isnan(aux)) = nanmean(aux);
-        MVdata(:,i) = aux;
-    end
-    clear aux;
-end
+[ MVdata , MVlabels , rownum ] = missingvalues( data , labels , method{3} );
 
-%----Option 2 - Replace for column mode----%
-if option==2
-    for i=1:colnum
-        aux = MVdata(:,i);
-        aux(isnan(aux)) = mode(aux);
-        MVdata(:,i) = aux;
-    end
-    clear aux;
-end
-
-%----Option 3 - Remove entries with NaN----%
-if option==3
-    i=rownum;
-    ind = [];
-    while i>=1
-       if sum(isnan(MVdata(i,:)))==0
-          ind = [ind  i];
-       end
-       i=i-1;
-    end
-    MVdata = MVdata(ind,:);
-    labels = labels(ind);
-    rownum = length(ind);
-end
-
-% %----Option 4 - Nearest-neighbor method----%
-% if option==4
-%     MVdata = knnimpute(MVdata(1:600,:)');
-% end
-
-% %----Option 4 - Linear Regression----%
-% if option==4
-%     missingColumns = find(sum(isnan(data))~=0);
-%     nonmissingColumns = find(sum(isnan(data))==0);
-%     max=zeros(length(missingColumns),1);
-%     ind=zeros(length(missingColumns),1);
-%     
-%     for j=1:length(missingColumns)
-%         for i=nonmissingColumns
-%             aux = data(:,missingColumns(j));
-%             [a,b] = corr(aux(~isnan(aux)),data(~isnan(aux),i));
-%             
-%             if(a>max(j))
-%                 max(j) = a;
-%                 ind(j) = i;
-%             end
-%         end
-%     end
-%     
-%     
-%     
-% end
+clear method;
 
 %% Normalization
 normdata = scalestd(MVdata);
 
-%% Feature Selection (Dimension reduction)
-option = 3;
+%% Feature Selection
+option = 1;
 
 switch option
-    %----PCA----%
+%----Kruskal-Wallis----%
     case 1
-        coeff = pca(normdata');
+        threshold = 0.95; %---Percentage of chi2 values to keep
+        FSdata = FS_kruskal( normdata , MVlabels , column_names , threshold );
         
-        max = 0.95*sum(coeff.eigval); % 95%
-        eig = [];
-        i = 1;
-        while(sum(eig)<=max)
-            eig = [eig ; coeff.eigval(i)];
-            i=i+1;
-        end
-        
-        PCAnormdata = normdata*coeff.W(:,1:length(eig));
-        
-    %----Kruskal-Wallis----%
+%----Correlation between features----%   
     case 2
-        rank = zeros(2,colnum);
-        chi2 = zeros(1,colnum);
-        for i=1:colnum
-            [p,tbl,stats] = kruskalwallis(normdata(:,i)',labels','off');
-            
-            rank(:,i) = stats.meanranks;
-            chi2(i) = tbl{2,5};
-        end
+        threshold = 0.80; %---Correlation cut-off value
+        [FSdata , FScolumn_names] = FS_corr( normdata , MVlabels , column_names , 'feat' , threshold);
         
-        [chi2_sort,ord] = sort(chi2,'descend');
-        KWcolumn_names = column_names(ord);
-        
-        table(:,1) = cellstr(KWcolumn_names);
-        table(:,2) = num2cell(chi2_sort);
-        disp('Features Rank:');
-        disp(table);
-        
-        chi22 = chi2(chi2>=0.05*sum(chi2)); % 95%
-        normdata = normdata(:,ord(1:length(chi22)));
-        
-     %----Correlation----%   
+%----Correlation between features and labels----% 
     case 3
-        RHO = corr(normdata);
-        RHO(RHO==0) = -10;
-        [maxcor,indmax] = max(RHO);
+        threshold = 13; %---Number of features desired
+        [FSdata , FScolumn_names] = FS_corr( normdata , MVlabels , column_names , 'featlabel' , threshold);
+        
+%----mRMR----% 
+    case 4
+        threshold = 15; %---Number of features desired
+        [FSdata , FScolumn_names] = FS_mRMR( normdata , MVlabels , column_names , threshold );
+        
+%----Area under curve----% 
+    case 5
+        threshold = 0.5; %---AUC cut-off value
+        [FSdata , AUC_column_names] = FS_AUC( normdata , MVlabels , column_names , threshold );
 end
+
+clear option threshold;
+
+%% Feature Reduction
+
+%----Create Structure----%
+FRdataTemp.X = FSdata';
+FRdataTemp.y = MVlabels';
+FRdataTemp.dim = size(FSdata,2);
+FRdataTemp.num_data = size(FSdata,1);
+
+option = 1;
+
+switch option
+%----PCA----%
+    case 1
+        threshold = 0.95; %---Percentage of Eigenvalues to keep
+        [ FRdata ] = FeatureReduction( FRdataTemp , 'pca' , threshold );
+        
+%----LDA----%        
+    case 2
+        threshold = 2; %---Number of features desired
+        [ FRdata ] = FeatureReduction( FRdataTemp , 'lda' , threshold );
+end
+
+clear option FRdataTemp threshold;

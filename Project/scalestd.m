@@ -9,6 +9,6 @@ data_norm = data - repmat(mean(data),L,1);
 
 data_norm = data_norm ./ repmat(std(data),L,1);
 
-
+disp('Data normalization executed.')
 end
 
