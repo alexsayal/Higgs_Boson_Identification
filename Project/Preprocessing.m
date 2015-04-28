@@ -24,7 +24,7 @@ figure();
 %% Missing values
 method = {'mean','mode','remove'};
 
-[ MVdata , MVlabels , rownum ] = missingvalues( data , labels , method{3} );
+[ MVdata , MVlabels , rownum ] = missingvalues( data , labels , method{1} );
 
 clear method;
 
@@ -58,7 +58,13 @@ switch option
 %----Area under curve----% 
     case 5
         threshold = 0.5; %---AUC cut-off value
-        [FSdata , AUC_column_names] = FS_AUC( normdata , MVlabels , column_names , threshold );
+        [FSdata , FS_column_names] = FS_AUC( normdata , MVlabels , column_names , threshold );
+
+%----Fisher Score----% 
+    case 6
+        threshold = 14; %---Number of features desired
+        [FSdata , FS_column_names] = FS_fisher(normdata , MVlabels , column_names, threshold ); 
+
 end
 
 clear option threshold;

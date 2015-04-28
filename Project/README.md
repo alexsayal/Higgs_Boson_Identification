@@ -17,12 +17,13 @@ Main file: Preprocessing.m
 		Uses function scalestd.m to perform data normalization.
 
 	4) Feature Selection
-		Performs one of the 5 techniques:
+		Performs one of the 6 techniques:
 			Option 1 - Kruskal-Wallis Test (FS_kruskal.m)
 			Option 2 - Correlation between features (FS_corr.m)
 			Option 3 - Correlation between features and labels (FS_corr.m)
 			Option 4 - Minimum Redundancy Maximum Relevance (FS_mRMR.m)
 			Option 5 - ROC Analysis - Area Under Curve (FS_AUC.m)
+			Option 6 - Fisher Score (FS_fisher.m)
 
 	 5) Feature Reduction
 	 	Uses function FeatureReduction.m to perform PCA or LDA.

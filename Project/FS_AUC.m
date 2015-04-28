@@ -22,4 +22,3 @@ delete(gcp);
 disp('AUC method completed.')
 
 end
-
