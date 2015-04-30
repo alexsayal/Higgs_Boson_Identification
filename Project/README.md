@@ -11,7 +11,7 @@ Main file: Preprocessing.m
 		Uses function dataimport.m to read the higgs dataset and return training and test subsets.
 
 	2) Missing Values Handling
-		Uses function missingvalues.m to handle the NaN by 3 different methods.
+		Uses function missingvalues.m to handle the NaN by 4 different methods.
 
 	3) Normalization
 		Uses function scalestd.m to perform data normalization.

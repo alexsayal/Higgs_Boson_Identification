@@ -11,4 +11,3 @@ data_norm = data_norm ./ repmat(std(data),L,1);
 
 disp('Data normalization executed.')
 end
-

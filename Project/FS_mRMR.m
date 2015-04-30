@@ -13,7 +13,9 @@ disp('|---mRMR---|');
         
 FSdata = data(:,mrmr_result);
 column_names_new = column_names(mrmr_result);
+
+T = table(num2cell(mrmr_result'),cellstr(column_names_new'),'VariableNames',{'Column_index' 'Feature'});
+disp(T);
         
 disp('mRMR completed.')
 end
-

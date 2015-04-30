@@ -1,11 +1,11 @@
-function [ FSdata ] = FS_kruskal( data , labels , column_names , thresholdKW )
+function [ FSdata , column_names_new ] = FS_kruskal( data , labels , column_names , threshold )
 %KRUSKAL-WALLIS for Feature Selection
 %   data(events x features)
 %   labels (events x 1)
 %   column_names (1 x colnum cell)
-%   thresholdKW (value between 0-1)
+%   threshold (desired number of features)
 %
-%   [ FSdata ] = FS_kruskal( data , labels , column_names , thresholdKW )
+%   [ FSdata , column_names_new ] = FS_kruskal( data , labels , column_names , thresholdKW )
 
 disp('|---Kruskal-Wallis Test---|');
 
@@ -18,23 +18,22 @@ for i=1:colnum
     chi2(i) = tbl{2,5};
 end
 
-[chi2_sort,ord] = sort(chi2,'descend');
-KWcolumn_names = column_names(ord);
+[chi2_sort,chi2_ord] = sort(chi2,'descend');
 
-T = table(num2cell(ord),cellstr(KWcolumn_names'),num2cell(chi2_sort),'VariableNames',{'Column_index' 'Feature' 'chi2'});
+FSdata = FSdata(:,chi2_ord(1:threshold));
+KWcolumn_names = column_names(chi2_ord);
+
+T = table(num2cell(chi2_ord),cellstr(KWcolumn_names'),num2cell(chi2_sort),'VariableNames',{'Column_index' 'Feature' 'chi2'});
 disp(T);
 
-maxchi = thresholdKW*sum(chi2);
-chi22 = [];
-i = 1;
-while(sum(chi22)<=maxchi)
-    chi22 = [chi22 ; chi2_sort(i)];
-    i=i+1;
-end
+figure();
+    bar(chi2_sort); line([threshold threshold],[0 max(chi2_sort)]);
+    title('\chi^2 Values'); 
+    xlabel('Features'); xlim([0 colnum]);
+    legend('\chi^2',strcat('Threshold=',num2str(threshold)));
 
-FSdata = FSdata(:,ord(1:length(chi22)));
+column_names_new = column_names(chi2_ord(1:threshold));
 
 disp('Kruskal-Wallis Test executed.');
 
 end
-

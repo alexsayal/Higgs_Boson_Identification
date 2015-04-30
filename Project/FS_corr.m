@@ -7,7 +7,7 @@ function [ FSdata , column_names_new ] = FS_corr( data , labels , column_names ,
 %   Method 'feat': Between features
 %       threshold (value between 0-1)
 %   Method 'featlabel': Between features and labels
-%       threshold (desired number of features)
+%       threshold (value between 0-1)
 
 FSdata = data;
 [~,colnum] = size(data);
@@ -22,10 +22,14 @@ switch method
         
         [maxcor,indmax] = max(RHO);
         indmax = sort(unique(indmax(maxcor>=threshold)),'descend');
+
         for i=indmax
             FSdata(:,i) = [];
             column_names_new(i) = [];
         end
+        disp('Features eliminated:');
+        T = table(num2cell(indmax'),cellstr(column_names(indmax)'),'VariableNames',{'Column_index' 'Feature'});
+        disp(T);
         
     %----Correlation between features and labels----%
     case 'featlabel'
@@ -33,11 +37,14 @@ switch method
         for i=1:colnum
             C(i) = abs(corr(data(:,i),labels));
         end
-        [~,ordC] = sort(C,'descend');
+        [sortC,ordC] = sort(C,'descend');
         
-        FSdata = data(:,ordC(1:threshold));
-        column_names_new = column_names(ordC(1:threshold));
+        FSdata = data(:,ordC(sortC>=threshold));
+        column_names_new = column_names(ordC(sortC>=threshold));
         
+        disp('Features selected:');
+        T = table(num2cell(ordC(sortC>=threshold)),cellstr(column_names_new'),num2cell(sortC(sortC>=threshold)),'VariableNames',{'Column_index' 'Feature' 'Correlation'});
+        disp(T);
 end
 
 disp('Correlation method completed.');

@@ -10,6 +10,7 @@ function [ FSdata , column_names_new ] = FS_AUC( data , labels , column_names , 
 [~,colnum] = size(data);
 
 AUC = zeros(colnum,1);
+
 parfor i=1:colnum
     [~,~,~,AUC(i)] = perfcurve(labels',data(:,i)',1);
 end
@@ -17,6 +18,10 @@ end
 
 FSdata = data(:,AUC_ord(AUC_s>=threshold));
 column_names_new = column_names(AUC_ord(AUC_s>=threshold));
+
+disp('Features selected:');
+T = table(num2cell(AUC_ord(AUC_s>=threshold)),cellstr(column_names_new'),num2cell(AUC_s(AUC_s>=threshold)),'VariableNames',{'Column_index' 'Feature' 'Area'});
+disp(T);
 
 delete(gcp);
 disp('AUC method completed.')
