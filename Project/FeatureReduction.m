@@ -26,7 +26,7 @@ switch method
         end
         
         figure();
-            bar(PCAmodel.eigval); line([i i],[0 max(PCAmodel.eigval)]);
+            bar(PCAmodel.eigval); line([i-1 i-1],[0 max(PCAmodel.eigval)]);
             title('PCA Eigenvalues');
             xlabel('Components');
             legend('Eigenvalues',strcat('Threshold=',num2str(threshold*100),'%'));
@@ -44,5 +44,7 @@ switch method
 
         FRdata = LDAmodel.W'*data_structure.X;
 end
+
+disp(strcat(method, ' executed.'));
 
 end

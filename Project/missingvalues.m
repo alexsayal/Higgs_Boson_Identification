@@ -32,7 +32,7 @@ switch method
             MVdata(:,i) = aux;
         end
         
-    %----Option 3 - Replace for column mean----%
+    %----Option 3 - Replace for class mean----%
     case 'meanclass'
         for i=1:colnum
             aux1 = MVdata(labels==1,i);
