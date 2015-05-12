@@ -84,9 +84,19 @@ for i=1:length(fruits)
 end
 
 %% Plots
-figure('units','centimeters','position',[5 5 45 15]);
-subplot(1,3,1); plot(F(:,3),'-o'); title('Ratio Cor'); line([19 19],[min(F(:,3)) max(F(:,3))],'Color','r'); line([31 31],[min(F(:,3)) max(F(:,3))],'Color','r');
-subplot(1,3,2); plot(F(:,4),'-o'); title('Ratio Forma 1'); line([19 19],[min(F(:,4)) max(F(:,4))],'Color','r'); line([31 31],[min(F(:,4)) max(F(:,4))],'Color','r');
+figure('Name','Ratios','units','centimeters','position',[5 5 35 15]);
+subplot(1,2,1); plot(F(:,3),'-o'); title('Ratio Cor'); line([19 19],[min(F(:,3)) max(F(:,3))],'Color','r'); line([31 31],[min(F(:,3)) max(F(:,3))],'Color','r');
+subplot(1,2,2); plot(F(:,4),'-o'); title('Ratio Forma'); line([19 19],[min(F(:,4)) max(F(:,4))],'Color','r'); line([31 31],[min(F(:,4)) max(F(:,4))],'Color','r');
+
+%% STPR Tool
+data.X = F(:,3:end)';
+data.y = F(:,2)';
+data.dim = size(data.X,1);
+data.num_data = size(data.X,2);
+
+figure('Name','Class Separation of Training Set'); ppatterns(data);
+xlabel('Feature 1 - Cor');
+ylabel('Feature 2 - Forma');
 
 %% Export
 

@@ -2,8 +2,8 @@
 %%%%% ================= Aula 8 ================ %%%%%
 %%%%% ================== 2015 ================= %%%%%
 
-
 %% Load
+clear, clc;
 [data,col_names]=xlsread('CORK_STOPPERS.XLS','Data');
 
 datan = data(1:100,6:7);

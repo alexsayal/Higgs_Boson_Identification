@@ -3,6 +3,7 @@
 %%%%% ================== 2015 ================= %%%%%
 
 %% Load
+clear, clc;
 
 raw_data = importdata('semeion.data');
 
@@ -13,11 +14,11 @@ id = raw_data(:,257:end);
 clear raw_data;
 
 %% Visualize
-% for i=1:length(data)
-%     A = vec2mat(data(i,:),16);
-%     imagesc(A);
-%     pause;
-% end
+for i=1:length(data)
+    A = vec2mat(data(i,:),16);
+    imagesc(A);
+    pause;
+end
 
 %% Matrix
 M=zeros(l,5);

@@ -3,6 +3,7 @@
 %%%%% ================== 2015 ================= %%%%%
 
 %% Load
+clear, clc;
 [xls_data,col_names]=xlsread('CORK_STOPPERS.XLS','Data');
 
 %% Preprocessing and prep for STPR
@@ -25,16 +26,16 @@ figure(1);
 scatter(subset1(1,:),subset1(2,:)); title('Sem PCA'); xlabel('ART'); ylabel('PRT');
 
 % Graph 2
-subset2 = linproj(subset1,coeff1);
+subset2 = subset1'*coeff1.W;
 figure(2);
-scatter(subset2(1,:),subset2(2,:)); title('Com PCA'); xlabel('PC 1'); ylabel('PC 2');
+scatter(subset2(:,2),subset2(:,2)); title('Com PCA'); xlabel('PC 1'); ylabel('PC 2');
 
 %% For the complete dataset
 
 coeff2 = pca(data.X); %PCA
 s = coeff2.eigval
 
-subset3.X = linproj(data.X(:,1:100),coeff2);
+subset3.X = coeff2.W*data.X(:,1:100);
 subset3.y = xls_data(1:100,2)';
 subset3.dim = size(data.X(:,1:100),1);
 subset3.num_data=size(data.X(:,1:100),2);

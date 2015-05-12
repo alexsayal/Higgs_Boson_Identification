@@ -97,8 +97,31 @@ Z_crimes = linkage(dist_crimes,'complete');
 
 subplot(1,2,2); dendrogram(Z_crimes,'labels',cities,'orientation','right');
 
+%% K-means Clustering
+data = load('riply_trn');
+[model,data.y] = cmeans( data.X, 4 );
+figure; ppatterns(data);
+ppatterns(model.X,'sk',12); pboundary( model );
 
+%% PCA + K-means for Breast
+clear, clc;
+[xls_data,col_names]=xlsread('BREAST_TISSUE.XLS','Data');
 
+data.X = xls_data(1:106,:)';
+data.y = col_names(2:107,1)';
+data.dim = size(data.X,2);
+data.num_data = size(data.X,1);
 
+data.y=strcmp('gla',col_names(2:107,1)) + strcmp('adi',col_names(2:107,1)) + strcmp('con',col_names(2:107,1));
+data.y(data.y==0) = 2;
 
+data.X = scalestd(data.X);
 
+model = pca(data.X);
+
+pca_data.X = model.W*data.X;
+pca_data.X = pca_data.X(1:2,:);
+
+[model,pca_data.y] = cmeans( pca_data.X, 2 );
+figure; ppatterns(pca_data);
+ppatterns(model.X,'sk',12); pboundary( model );

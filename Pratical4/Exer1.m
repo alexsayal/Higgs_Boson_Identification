@@ -17,4 +17,3 @@ ppatterns(data_2d);
 
 % Metodo unsupervised
 % Bad bad bad in this caso
-% 

@@ -3,6 +3,7 @@
 %%%%% ================== 2015 ================= %%%%%
 
 %% Import
+clear, clc;
 load('epilepsy_powers.mat');
 
 %% Data Struc
