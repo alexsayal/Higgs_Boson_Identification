@@ -12,6 +12,7 @@ data = file(1:end-50000,2:31); %Actual Data
 testdata = file(end-49999:end,2:31); %Data for testing
 
 data(data==-999) = NaN; %Convert all -999 to NaN
+testdata(testdata==-999) = NaN; %Convert all -999 to NaN
 clear higgs_data_for_optimization;
 
 disp('Data Import Successful.')

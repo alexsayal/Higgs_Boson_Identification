@@ -1,13 +1,19 @@
-function [ data_norm ] = scalestd( data )
+function [ data_norm , av , sigma ] = scalestd( data , av , sigma)
 %SCALESTD   Normalization function:
 % N = scalestd(data) returns the matrix N with the normalized matrix data.
 % The function performs mean subtraction and standard deviation division.
 
 [L,~] = size(data);
 
-data_norm = data - repmat(mean(data),L,1);
+if(nargin<2)
+    disp('No parameters specified.')
+    av = mean(data);   
+    sigma = std(data);
+end
 
-data_norm = data_norm ./ repmat(std(data),L,1);
+data_norm = data - repmat(av,L,1);
+
+data_norm = data_norm ./ repmat(sigma,L,1);
 
 disp('Data normalization executed.')
 end

@@ -28,12 +28,14 @@ clear h hp;
 %% Missing values
 method = {'mean','mode','meanclass','remove'};
 
-[ MVdata , MVlabels , rownum ] = missingvalues( data , labels , method{1} );
+[ MVdata , MVlabels , rownum ] = missingvalues( data , labels , method{3} );
+[ MVtestdata , MVtestlabels , testrownum ] = missingvalues( testdata , testlabels , method{3} );
 
 clear method;
 
 %% Normalization
-normdata = scalestd(MVdata);
+[normdata , m , sigma ] = scalestd(MVdata);
+normtestdata = scalestd(MVtestdata,m,sigma);
 
 %% Feature Selection
 option = 1;
@@ -41,8 +43,9 @@ option = 1;
 switch option
 %----Kruskal-Wallis----%
     case 1
-        threshold = 15; %---Number of features desired based on chi2 values
+        threshold = 10; %---Number of features desired based on chi2 values
         [FSdata , FScolumn_names] = FS_kruskal( normdata , MVlabels , column_names , threshold );
+        [FStestdata , FStestcolumn_names] = FS_kruskal( normtestdata , MVtestlabels , column_names , threshold );
         
 %----Correlation between features----%   
     case 2
@@ -81,18 +84,25 @@ FRdataTemp.y = MVlabels';
 FRdataTemp.dim = size(FSdata,2);
 FRdataTemp.num_data = size(FSdata,1);
 
+FRtestdataTemp.X = FStestdata';
+FRtestdataTemp.y = MVtestlabels';
+FRtestdataTemp.dim = size(FStestdata,2);
+FRtestdataTemp.num_data = size(FStestdata,1);
+
 option = 1;
 
 switch option
 %----PCA----%
     case 1
-        threshold = 0.95; %---Percentage of Eigenvalues to keep
+        threshold = 0.40; %---Percentage of Eigenvalues to keep
         [ FRdata ] = FeatureReduction( FRdataTemp , 'pca' , threshold );
+        [ FRtestdata ] = FeatureReduction( FRtestdataTemp , 'pca' , threshold );
         
 %----LDA----%        
     case 2
-        threshold = 1; %---Number of features desired
+        threshold = 2; %---Number of features desired
         [ FRdata ] = FeatureReduction( FRdataTemp , 'lda' , threshold );
+        [ FRtestdata ] = FeatureReduction( FRtestdataTemp , 'lda' , threshold );
 end
 
 clear option FRdataTemp threshold;
