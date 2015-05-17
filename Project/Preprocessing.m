@@ -8,9 +8,9 @@ clear, clc;
 
 load higgs_data.mat;
 
-[labels,eventID,column_names,data,testdata,testlabels] = dataimport( higgs_data_for_optimization , column_names);
+[labels,eventID,column_names,rawdata] = dataimport( higgs_data_for_optimization , column_names);
 
-clear higgs_data_for_optimization;
+%clear higgs_data_for_optimization;
 
 %% Balance between decay and background events
 balance = zeros(2,1);
@@ -25,17 +25,39 @@ figure();
 
 clear h hp;
 
+%% Cross Validation
+% Partition the data into training set and test set.
+% The training set will be used to calibrate/train the model parameters.
+% The trained model is then used to make a prediction on the test set.
+
+% Hold 40% of the data, selected randomly, for test phase.
+cv = cvpartition(length(rawdata),'holdout',0.4);
+
+% Training set
+Xtrain = rawdata(training(cv),:);
+Ytrain = labels(training(cv),:);
+% Test set
+Xtest = rawdata(test(cv),:);
+Ytest = labels(test(cv),:);
+
+disp('Training Set')
+tabulate(Ytrain)
+disp('Test Set')
+tabulate(Ytest)
+
+clear cv;
+
 %% Missing values
 method = {'mean','mode','meanclass','remove'};
 
-[ MVdata , MVlabels , rownum ] = missingvalues( data , labels , method{3} );
-[ MVtestdata , MVtestlabels , testrownum ] = missingvalues( testdata , testlabels , method{3} );
+[ MVdata , MVlabels , rownum ] = missingvalues( Xtrain , Ytrain , method{3} );
+[ MVtestdata , MVtestlabels , testrownum ] = missingvalues( Xtest , Ytest , method{3} );
 
 clear method;
 
 %% Normalization
-[normdata , m , sigma ] = scalestd(MVdata);
-normtestdata = scalestd(MVtestdata,m,sigma);
+[normdata , m , sigma ] = scalestd(MVdata); %Train
+normtestdata = scalestd(MVtestdata,m,sigma); %Test (with mean and std from Train set)
 
 %% Feature Selection
 option = 1;
