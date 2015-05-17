@@ -1,11 +1,11 @@
 %% datasets
 trn.X = FRdata;
-trn.y = labels';
+trn.y = Ytrain';
 trn.dim = 2;
 trn.num_data = 150000;
 
 tst.X = FRtestdata;
-tst.y = testlabels';
+tst.y = Ytest';
 tst.dim = 2;
 tst.num_data = 150000;
 
@@ -34,6 +34,3 @@ model.Prior = [length(inx1) length(inx2)]/(length(inx1)+length(inx2));
 ypred = bayescls(tst.X,model);
 
 cerror(ypred,tst.y)
-
-
-

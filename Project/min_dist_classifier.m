@@ -3,9 +3,9 @@
 %%%%% ================== 2015 ================= %%%%%
     
 data=FRdata';
-id=labels;
+id=Ytrain;
 testdata = FRtestdata';
-testid=testlabels;
+testid=Ytest;
 
 [l,c]=size(testdata);
 
