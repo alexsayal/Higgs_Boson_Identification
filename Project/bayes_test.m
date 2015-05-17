@@ -1,11 +1,11 @@
 %% datasets
 trn.X = FRdata;
-trn.y = Ytrain';
+trn.y = MVlabels';
 trn.dim = 2;
 trn.num_data = 150000;
 
 tst.X = FRtestdata;
-tst.y = Ytest';
+tst.y = MVtestlabels';
 tst.dim = 2;
 tst.num_data = 150000;
 

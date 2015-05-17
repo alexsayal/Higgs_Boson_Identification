@@ -1,5 +1,5 @@
 data.X = FRdata;
-data.y = Ytrain';
+data.y = MVlabels';
 data.dim = 2;
 data.num_data = 90000;
 

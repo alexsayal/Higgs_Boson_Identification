@@ -7,7 +7,7 @@ cerror( ypred, tst.y )
 
 %%
 trn.X = FRdata(:,1:1000);
-trn.y = Ytrain(1:1000)';
+trn.y = MVlabels(1:1000)';
 trn.dim = 2;
 trn.num_data = 1000;
 
@@ -15,7 +15,7 @@ model = smo(trn,struct('ker','linear','C',10,'arg',5));
 figure; ppatterns(trn); psvm(model);
 
 tst.X = FRtestdata(:,1:1000);
-tst.y = Ytest(1:1000)';
+tst.y = MVtestlabels(1:1000)';
 tst.dim = 2;
 tst.num_data = 1000;
 
@@ -24,9 +24,9 @@ cerror( ypred, tst.y )
 
 %%
 X = FRdata(:,1:1000)';
-y = Ytrain(1:1000);
+y = MVlabels(1:1000);
 Xtest = FRtestdata(:,1:1000)';
-Ytest = Ytest(1:1000);
+Ytest = MVtestlabels(1:1000);
 
 SVMModel = fitcsvm(X,y);
 
