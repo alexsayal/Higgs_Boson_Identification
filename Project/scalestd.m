@@ -6,7 +6,6 @@ function [ data_norm , av , sigma ] = scalestd( data , av , sigma)
 [L,~] = size(data);
 
 if(nargin<2)
-    disp('No parameters specified.')
     av = mean(data);   
     sigma = std(data);
 end

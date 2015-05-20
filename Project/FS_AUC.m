@@ -1,4 +1,4 @@
-function [ FSdata , column_names_new ] = FS_AUC( data , labels , column_names , threshold )
+function [ FSdata , column_names_new , selected_features ] = FS_AUC( data , labels , column_names , threshold )
 %ROC_AUC for Feature Selection
 %   data (events x features)
 %   labels (events x 1)
@@ -16,11 +16,12 @@ parfor i=1:colnum
 end
 [AUC_s,AUC_ord] = sort(AUC,'descend');
 
-FSdata = data(:,AUC_ord(AUC_s>=threshold));
-column_names_new = column_names(AUC_ord(AUC_s>=threshold));
+selected_features = AUC_ord(AUC_s>=threshold);
+FSdata = data(:,selected_features);
+column_names_new = column_names(selected_features);
 
 disp('Features selected:');
-T = table(num2cell(AUC_ord(AUC_s>=threshold)),cellstr(column_names_new'),num2cell(AUC_s(AUC_s>=threshold)),'VariableNames',{'Column_index' 'Feature' 'Area'});
+T = table(num2cell(selected_features),cellstr(column_names_new'),num2cell(AUC_s(AUC_s>=threshold)),'VariableNames',{'Column_index' 'Feature' 'Area'});
 disp(T);
 
 delete(gcp);

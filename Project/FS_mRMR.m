@@ -1,4 +1,4 @@
-function [ FSdata , column_names_new ] = FS_mRMR( data , labels , column_names, threshold )
+function [ FSdata , column_names_new , selected_features ] = FS_mRMR( data , labels , column_names, threshold )
 %mRMR for Feature Selection
 %   data(events x features)
 %   labels (events x 1)
@@ -9,13 +9,13 @@ function [ FSdata , column_names_new ] = FS_mRMR( data , labels , column_names, 
 
 disp('|---mRMR---|');
 
-[mrmr_result] = mrmr_mid_d(data,labels,threshold);
+[selected_features] = mrmr_mid_d(data,labels,threshold);
         
-FSdata = data(:,mrmr_result);
-column_names_new = column_names(mrmr_result);
+FSdata = data(:,selected_features);
+column_names_new = column_names(selected_features);
 
-T = table(num2cell(mrmr_result'),cellstr(column_names_new'),'VariableNames',{'Column_index' 'Feature'});
+T = table(num2cell(selected_features'),cellstr(column_names_new'),'VariableNames',{'Column_index' 'Feature'});
 disp(T);
-        
+selected_features = selected_features';        
 disp('mRMR completed.')
 end

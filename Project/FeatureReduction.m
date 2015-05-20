@@ -1,4 +1,4 @@
-function [ FRdata ] = FeatureReduction( data_structure , method , threshold )
+function [ FRdata , W ] = FeatureReduction( data_structure , method , threshold )
 %FEATURE REDUCTION 
 %   data_structure:
 %       data.X = data (features x events)
@@ -31,6 +31,7 @@ switch method
             xlabel('Components');
             legend('Eigenvalues',strcat('Threshold=',num2str(threshold*100),'%'));
             
+        W = PCAmodel.W(:,1:length(eig));
         FRdata = PCAmodel.W(:,1:length(eig))'*data_structure.X;
         
 %----LDA----%        
@@ -41,7 +42,8 @@ switch method
             bar(real(diag(LDAmodel.eigval)));
             title('LDA Eigenvalues');
             xlabel('Components');
-
+        
+        W = LDAmodel.W;
         FRdata = LDAmodel.W'*data_structure.X;
 end
 

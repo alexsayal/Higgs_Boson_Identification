@@ -1,14 +1,17 @@
-function [ MVdata , labels_new , rownum_new ] = missingvalues( data , labels , method )
+function [ MVdata , labels_new , rownum_new , colnum_new , column_names_new ] = missingvalues( data , labels , column_names , method )
 %MISSING VALUES Removes missing values from data
-%   Possible methods - 'mean' , 'mode' , 'meanclass' , 'remove'
+%   Possible methods - 'mean' , 'mode' , 'meanclass' , 'removeevents' ,
+%   'removefeatures'
 %
-%   [ MVdata , labels_new , rownum_new ] = missingvalues( data , labels , method )
+%   [ MVdata , labels_new , rownum_new , colnum_new ] = missingvalues( data , labels , method )
 
 MVdata = data;
 nannum = sum(sum(isnan(data))); %Number of NaN
 [rownum,colnum] = size(data);
 labels_new = labels;
 rownum_new = rownum;
+colnum_new = colnum;
+column_names_new = column_names;
 
 if nargin < 3
     method = 'mean';
@@ -44,7 +47,7 @@ switch method
         end
         
     %----Option 4 - Remove entries with NaN----%
-    case 'remove'
+    case 'removeevents'
         i=rownum;
         ind = [];
         while i>=1
@@ -55,7 +58,23 @@ switch method
         end
         MVdata = MVdata(ind,:);
         labels_new = labels(ind);
-        rownum_new = length(ind);  
+        rownum_new = length(ind);
+        
+    %----Option 5 - Remove features with NaN----%
+    case 'removefeatures'
+        i=colnum;
+        ind = [];
+        while i>=1
+            if sum(isnan(MVdata(:,i)))==0
+                ind = [ind  i];
+            end
+            i=i-1;
+        end
+        ind = sort(ind);
+        MVdata = MVdata(:,ind);
+        labels_new = labels;
+        colnum_new = length(ind);
+        column_names_new = column_names(ind);
 end
 
 s = strcat(num2str(nannum),' missing values successfully replaced/removed.');
