@@ -19,15 +19,18 @@ switch type
         fld_model = fld(trn);
         
     case 'quad'
-        fld_model = fldqp(trn);
-        
+        fld_model = fldqp(trn);     
 end
 
 %--- Test
 ypred = linclass(tst.X,fld_model);
 
 if trn.dim==2, figure; ppatterns(trn); pline(fld_model); end
-performance = (1-cerror(ypred,tst.y))*100;
+
+%performance = (1-cerror(ypred,tst.y))*100;
+
+[~,cm,~,~] = confusion(ypred-ones(1,tst.num_data),tst.y-ones(1,tst.num_data));
+performance = 100*( cm(2,2)/(cm(2,2)+cm(1,2)) + cm(1,1)/(cm(1,1)+cm(2,1)) )/2;
 
 end
 

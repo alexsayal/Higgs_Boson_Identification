@@ -1,4 +1,4 @@
-function [ performance , quad_model ] = CL_bayes( train , trainlabels , test , testlabels , type )
+function [ performance , model ] = CL_bayes( train , trainlabels , test , testlabels , type )
 %CL_BAYES Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -18,13 +18,15 @@ switch type
         %-- Bayes Classifier
         gauss_model = mlcgmm(trn);
         
-        quad_model = bayesdf(gauss_model);
+        model = bayesdf(gauss_model);
         
         %-- Test
-        ypred = quadclass(tst.X,quad_model);
-        performance = (1-cerror(ypred,tst.y))*100;
+        ypred = quadclass(tst.X,model);
+        %performance = (1-cerror(ypred,tst.y))*100;
         
-        if trn.dim==2, figure; ppatterns(trn); pboundary(quad_model); end;
+        %if trn.dim==2, figure; ppatterns(trn); pboundary(quad_model); end;
+        [~,cm,~,~] = confusion(ypred-ones(1,tst.num_data),tst.y-ones(1,tst.num_data));
+        performance = 100*( cm(2,2)/(cm(2,2)+cm(1,2)) + cm(1,1)/(cm(1,1)+cm(2,1)) )/2;
         
     case 'cls'
         %-- Bayes Classifier
@@ -38,7 +40,8 @@ switch type
         %-- Test
         ypred = bayescls(tst.X,model);
         
-        performance = (1-cerror(ypred,tst.y))*100;
+        [~,cm,~,~] = confusion(ypred-ones(1,tst.num_data),tst.y-ones(1,tst.num_data));
+        performance = 100*( cm(2,2)/(cm(2,2)+cm(1,2)) + cm(1,1)/(cm(1,1)+cm(2,1)) )/2;
 end
 
 end
