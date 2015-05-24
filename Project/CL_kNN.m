@@ -1,27 +1,65 @@
-function [ performance , model ] = CL_kNN(  train , trainlabels , test , testlabels , K )
+function [ best_performance , best_model , best_K , best_dist ] = CL_kNN(  train , trainlabels , test , testlabels , K , kfold )
 %CL_kNN Summary of this function goes here
 %   Detailed explanation goes here
+parpool('local',4);
+tic
 
-%--- Structures
-trn.X = train(:,1:8000);
-trn.y = trainlabels(1:8000)';
-trn.dim = size(trn.X,1);
-trn.num_data = size(trn.X,2);
+type = {'cityblock','euclidean','hamming','jaccard'};
 
-tst.X = test(:,1:8000);
-tst.y = testlabels(1:8000)';
-tst.dim = size(tst.X,1);
-tst.num_data = size(tst.X,2);
+disp('------ k-NN Classifier ------');
 
-model=knnrule(trn,K);
-if trn.dim==2, figure; ppatterns(trn); pboundary(model); end;
+%=====Cross validation and Training=====
+cv = cvpartition(length(train),'kfold',kfold);
 
-ypred = knnclass(tst.X,model);
+[k,dista] = meshgrid(K, 1:length(type));
 
-%performance = (1-cerror(ypred,tst.y))*100;
+meanperf = zeros(numel(k),1);
 
-[~,cm,~,~] = confusion(ypred-ones(1,tst.num_data),tst.y-ones(1,tst.num_data));
-performance = 100*( cm(2,2)/(cm(2,2)+cm(1,2)) + cm(1,1)/(cm(1,1)+cm(2,1)) )/2;
+parfor j=1:numel(k)
+    if mod(j,10)==0 || j==1, fprintf('>Run %d out of %d \n',j,numel(k)); end
+    [ auxmeanperf ] = CL_kNN_main( cv, k ,dista, j, train, trainlabels, type, kfold);
+    meanperf(j) = mean(auxmeanperf);
+
+end
+
+%--- Pair (K,distance) with best accuracy
+[best_performance,idx] = max(meanperf);
+
+best_K = k(idx);
+best_dist = type{dista(idx)};
+best_model=fitcknn(train,trainlabels,'NumNeighbors',best_K,'Distance',type{dista(idx)});
+
+fprintf('Cross Validation Maximum Accuracy = %f%% \n',best_performance);
+fprintf('Best K = %f \n',best_K);
+fprintf('Best distance metric is %s \n',best_dist);
+
+%--- Plot
+imagesc(K, 1:length(type), reshape(meanperf,size(k))), colorbar, grid on;
+ylim([0.5 length(type)+0.5]); xlim([K(1)-0.5 K(end)+0.5]);
+set(gca, 'YTick', 1:length(type), 'YTickLabel', type);
+hold on
+plot(k(idx), dista(idx), 'rx')
+text(k(idx), dista(idx), sprintf('Acc = %.2f %%',meanperf(idx)), ...
+    'HorizontalAlign','left', 'VerticalAlign','top')
+hold off
+xlabel('K'), ylabel('Distance metric'), title('Cross-Validation Accuracy')
+
+%=====Testing=====
+
+ftest.X = test;
+ftest.y = testlabels;
+ftest.dim = size(ftest.X,2);
+ftest.num_data = size(ftest.X,1);
+
+%---Test
+ypred = predict(best_model,ftest.X);
+[~,cm,~,~] = confusion(ypred'-ones(1,ftest.num_data),ftest.y'-ones(1,ftest.num_data));
+best_performance = 100*( cm(2,2)/(cm(2,2)+cm(1,2)) + cm(1,1)/(cm(1,1)+cm(2,1)) )/2;
+
+fprintf('Test Accuracy = %f%% \n',best_performance);
+toc
+delete(gcp)
+disp('----------------------------');
 
 end
 

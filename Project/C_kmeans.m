@@ -1,21 +1,31 @@
-function [ performance , model ] = C_kmeans( train , trainlabels  )
+function [ best_performance , best_model ] = C_kmeans( train , trainlabels , kfold )
 %K-MEANS Summary of this function goes here
 %   Detailed explanation goes here
 
-%--- Structures
-trn.X = train;
-trn.y = trainlabels';
-trn.dim = size(train,1);
-trn.num_data = size(train,2);
+disp('------ k-means Clustering ------');
 
-%[2.78 -0.68;0.581 0.2723]
-[model,data2.y] = cmeans( trn.X, 2);
+%=====Cross validation and Training=====
+cv = cvpartition(length(train),'kfold',kfold);
 
-if trn.dim==2
-figure; ppatterns(data); ppatterns(model.X,'sk',10); pboundary( model );
+best_performance = 0;
+for i=1:kfold
+    fprintf('Run %d out of %d \n',i,kfold);
+    %---Training set
+    trn.X = train(cv.training(i),:)';
+    trn.y = trainlabels(cv.training(i));
+    trn.dim = size(trn.X,1);
+    trn.num_data = size(trn.X,2);
+    
+    [model,ypred] = cmeans( trn.X, 2);
+    
+    [~,cm,~,~] = confusion(ypred-ones(1,trn.num_data),trn.y'-ones(1,trn.num_data));
+    performance = 100*( cm(2,2)/(cm(2,2)+cm(1,2)) + cm(1,1)/(cm(1,1)+cm(2,1)) )/2;
+    
+    if performance>best_performance
+        best_performance = performance;
+        best_model = model;
+    end
 end
-
-performance = (1-cerror( data2.y, trn.y ))*100;
+fprintf('Cross Validation maximum Accuracy = %f%% \n',best_performance);
 
 end
-

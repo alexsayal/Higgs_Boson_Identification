@@ -13,17 +13,16 @@ load higgs_data.mat;
 clear higgs_data_for_optimization;
 
 %% Balance between decay and background events
-balance = zeros(2,1);
-balance(1) = length(labels(labels==1))*100 / (length(labels(labels==2))+length(labels(labels==1)));
-balance(2) = 100-balance(1);
+tbl = tabulate(rawlabels);
+
 figure();
-    h = pie(balance);
+    h = pie(tbl(:,3));
     hp = findobj(h, 'Type', 'patch');
     set(hp(1), 'FaceColor', [0 0.4470 0.7410]); set(hp(2), 'FaceColor', [0.8500 0.3250 0.0980]);
     title('Class distribution of original data');
     legend('Decay','Background');
 
-clear h hp;
+clear tbl h hp;
 
 %% New datasets
 data = rawdata;
@@ -100,6 +99,8 @@ switch option
         [ FRdata , W ] = FeatureReduction( FRdataTemp , 'lda' , threshold );
 end
 
+FRdata = FRdata';
+
 clear option FRdataTemp threshold;
 
 %% Cross Validation
@@ -107,79 +108,67 @@ clear option FRdataTemp threshold;
 % The training set will be used to calibrate/train the model parameters.
 % The trained model is then used to make a prediction on the test set.
 
-% Hold 40% of the data, selected randomly, for test phase.
-fold = 10;
-cv = cvpartition(length(FRdata),'kfold',fold);
+data_to_use = FSdata;
+%data_to_use = FRdata;
 
-%% Classification - Train
+% Hold 25% of the data, selected randomly, for test phase.
+cv = cvpartition(length(data_to_use),'holdout',0.25);
+
+%---Training set
+Xtrain = data_to_use(cv.training(1),:);
+Ytrain = MVlabels(cv.training(1),:);
+%---Test set
+Xtest = data_to_use(cv.test(1),:);
+Ytest = MVlabels(cv.test(1),:);
+
+%---Display class distribuition
+disp('Training Set:')
+tabulate(Ytrain)
+disp('Test Set:')
+tabulate(Ytest)
+
+%% Classification
 
 class = {'bayes','fld','svm','kNN','kmeans','mindist'};
-selected = class{4};
+selected = class{5};
 
-for i=1:fold
-    
-    %---Training set
-    Xtrain = FRdata(:,cv.training(i));
-    Ytrain = MVlabels(cv.training(i),:);
-    %---Test set
-    Xtest = FRdata(:,cv.test(i));
-    Ytest = MVlabels(cv.test(i),:);
-    
-    %---Display class distribuition
-    disp('Training Set:')
-    tabulate(Ytrain)
-    disp('Test Set:')
-    tabulate(Ytest)
-    
-    switch selected
-        case 'bayes'
-            %%---Bayes Classifier
-            if i==1; bestperf_bayes = 0; end;
-            [ performance_bayes , model_bayes ] = CL_bayes( Xtrain , Ytrain , Xtest , Ytest , 'df');
-            if performance_bayes>bestperf_bayes
-                bestperf_bayes = performance_bayes;
-                bestmodel_bayes = model_bayes;
-            end
-            
-        case 'fld'
-            %%---FLD Classifier
-            if i==1; bestperf_fld = 0; end;
-            [ performance_fld , model_fld ] = CL_fld( Xtrain , Ytrain , Xtest , Ytest , 'linear' );
-            if performance_fld>bestperf_fld
-                bestperf_fld = performance_fld;
-                bestmodel_fld = model_fld;
-            end
-            
-        case 'svm'
-            %%---SVM
-            [ performance_svm , model_svm ] = CL_SVM( Xtrain , Ytrain , Xtest, Ytest);
-            
-        case 'kNN'
-            %%---kNN
-            K = 25;
-            if i==1; bestperf_kNN = 0; end;
-            [ performance_kNN , model_knn ] = CL_kNN( Xtrain , Ytrain , Xtest, Ytest , K);
-             if performance_kNN>bestperf_kNN
-                bestperf_kNN = performance_kNN;
-                bestmodel_kNN = model_knn;
-             end
-            
-        case 'kmeans'
-            %%---K-means
-            if i==1; bestperf_kmeans = 0; end;
-            [ performance_kmeans , model_kmeans ] = C_kmeans( Xtrain , Ytrain  );
-            if performance_kmeans>bestperf_kmeans
-                bestperf_kmeans = performance_kmeans;
-                bestmodel_kmeans = model_kmeans;
-            end
-            
-        case 'mindist'
-            %%---Minimum Distance
-            if i==1; bestperf_mindist = 0; end;
-            [ performance_mindist , model_mindist ] = CL_mindist( Xtrain , Ytrain , Xtest, Ytest );
-            if performance_mindist>bestperf_mindist
-                bestperf_mindist = performance_mindist;
-                bestmodel_mindist = model_mindist;
-            end
-    end
+switch selected
+    case 'bayes'
+        %%---Bayes Classifier
+        nfold = 10;
+        type = {'df','cls'}; stype = 1;
+        [ CL_bayes_performance , CL_bayes_model ] = CL_bayes( Xtrain , Ytrain , Xtest , Ytest , type{stype} , nfold);
+
+    case 'fld'
+        %%---FLD Classifier
+        nfold = 10;
+        type = {'linear','quad'}; stype = 1;
+        [ CL_fld_performance , CL_fld_model ] = CL_fld( Xtrain , Ytrain , Xtest , Ytest , type{stype} , nfold );
+        
+    case 'svm'
+        %%---SVM
+        nfold = 10;
+        C = -16:2:16;
+        [ CL_svm_performance , CL_svm_model ] = CL_SVM( Xtrain , Ytrain , Xtest, Ytest , C , nfold);
+        
+    case 'kNN'
+        %%---kNN
+        nfold = 10;
+        K = 15:30;
+        [ CL_kNN_performance , CL_kNN_model ] = CL_kNN( Xtrain , Ytrain , Xtest, Ytest , K , nfold);
+        
+    case 'kmeans'
+        %%---K-means
+        nfold = 10;
+        [ C_kmean_performance , C_kmeans_model ] = C_kmeans( Xtrain , Ytrain , nfold );
+       
+%     case 'mindist'
+%         %%---Minimum Distance
+%         if i==1; bestperf_mindist = 0; end;
+%         [ performance_mindist , model_mindist ] = CL_mindist( Xtrain , Ytrain , Xtest, Ytest );
+%         if performance_mindist>bestperf_mindist
+%             bestperf_mindist = performance_mindist;
+%             bestmodel_mindist = model_mindist;
+%         end
 end
+

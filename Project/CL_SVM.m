@@ -1,55 +1,34 @@
-function [ performance , model ] = CL_SVM( train , trainlabels , test , testlabels )
+function [ best_performance , best_model , best_C ] = CL_SVM( train , trainlabels , test , testlabels , C , folds)
 %CL_SVM Summary of this function goes here
 %   Detailed explanation goes here
 
-%--- Structures
-trn.X = train(:,1:1000);
-trn.y = trainlabels(1:1000)';
-trn.dim = size(train,1);
-trn.num_data = size(train,2);
+disp('------ SVM Classifier ------');
 
-tst.X = test(:,1:1000);
-tst.y = testlabels(1:1000)';
-tst.dim = size(test,1);
-tst.num_data = size(test,2);
+labels = trainlabels;
+data = sparse(train);
 
-% options.ker = 'rbf';
-% options.arg = [0.1 0.5 1 5];
-% options.C = [1 10 100];
-% options.solver = 'smo';
-% options.num_folds = 1;
-% options.verb = 1;
-%
-% [model,Errors] = evalsvm(trn,options);
-%
-% figure; mesh(options.arg,options.C,Errors);
-% hold on; xlabel('arg'); ylabel('C');
-
-aux = -3:3;
-C = 2.^aux;
-aux = -3:3;
-gamma = 2.^aux;
-errors = [];
-
-for c = C
-    c
-    for g = gamma
-        g
-        model = smo(trn,struct('ker','rbf','C',c,'arg',g));
-        
-        ypred = svmclass( tst.X, model );
-        errors = [errors; c g cerror( ypred, tst.y )];
-        clear model ypred;
-    end
+%=====Cross validation and training=====
+cv_acc = zeros(length(C),1);
+for i=1:length(C)
+    fprintf('C %d: ',i);
+    cv_acc(i) = liblineartrain(labels, data, sprintf('-c %f -s %d -B %d -v %d -q', 2^C(i), 2, 1,  folds));
 end
 
-[~,bestind] = min(errors(:,4));
-model = smo(trn.X,struct('ker','rbf','C',errors(bestind,1),'arg',errors(bestind,2)));
+%---C with best accuracy
+[best_performance,idx] = max(cv_acc);
+best_C = 2^C(idx);
 
-ypred = svmclass(tst.X,model);
+fprintf('Cross Validation maximum Accuracy = %f%% \n',best_performance);
+fprintf('Best C = %f \n',best_C);
 
-performance = (1-cerror(ypred,tst.y))*100;
+%=====Test=====
+best_model = liblineartrain(labels, data, ...
+                    sprintf('-c %f -s %d -B %d -q', best_C , 2 , 1));
 
+
+[~,best_performance,~] = liblinearpredict(testlabels, sparse(test), best_model, '-q');
+
+fprintf('Test Accuracy = %f%% \n',best_performance(1));
+disp('------------------------------');
 
 end
-
