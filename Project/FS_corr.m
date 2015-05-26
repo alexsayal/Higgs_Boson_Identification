@@ -43,7 +43,7 @@ switch method
         end
         [sortC,ordC] = sort(C,'descend');
         
-        selected_features = ordC(sortC>=threshold);
+        selected_features = sort(ordC(sortC>=threshold));
         FSdata = data(:,selected_features);
         column_names_new = column_names(selected_features);
         

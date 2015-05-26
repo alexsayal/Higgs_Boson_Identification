@@ -6,13 +6,16 @@ function [ data_norm , av , sigma ] = scalestd( data , av , sigma)
 [L,~] = size(data);
 
 if(nargin<2)
+    sss = 'Train';
     av = mean(data);   
     sigma = std(data);
+else
+    sss = 'Test';
 end
 
 data_norm = data - repmat(av,L,1);
 
 data_norm = data_norm ./ repmat(sigma,L,1);
 
-disp('Data normalization executed.')
+fprintf('%s data normalization executed.\n',sss)
 end

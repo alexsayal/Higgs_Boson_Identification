@@ -20,7 +20,7 @@ end
 
 [chi2_sort,chi2_ord] = sort(chi2,'descend');
 
-selected_features = chi2_ord(1:threshold);
+selected_features = sort(chi2_ord(1:threshold));
 
 FSdata = FSdata(:,chi2_ord(selected_features));
 column_names_new = column_names(chi2_ord(selected_features));

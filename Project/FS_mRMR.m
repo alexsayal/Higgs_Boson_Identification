@@ -9,8 +9,8 @@ function [ FSdata , column_names_new , selected_features ] = FS_mRMR( data , lab
 
 disp('|---mRMR---|');
 
-[selected_features] = mrmr_mid_d(data,labels,threshold);
-        
+selected_features = sort(mrmr_mid_d(data,labels,threshold));
+
 FSdata = data(:,selected_features);
 column_names_new = column_names(selected_features);
 

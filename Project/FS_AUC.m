@@ -17,12 +17,15 @@ end
 [AUC_s,AUC_ord] = sort(AUC,'descend');
 
 selected_features = AUC_ord(AUC_s>=threshold);
-FSdata = data(:,selected_features);
+FSdata = data(:,sort(selected_features));
 column_names_new = column_names(selected_features);
 
 disp('Features selected:');
 T = table(num2cell(selected_features),cellstr(column_names_new'),num2cell(AUC_s(AUC_s>=threshold)),'VariableNames',{'Column_index' 'Feature' 'Area'});
 disp(T);
+
+selected_features = sort(selected_features);
+column_names_new = column_names(selected_features);
 
 delete(gcp);
 disp('AUC method completed.')

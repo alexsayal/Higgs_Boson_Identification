@@ -20,11 +20,14 @@ end
 [F_s,F_ord] = sort(F,'descend');
 
 selected_features = F_ord(1:threshold);
-FSdata = data(:,selected_features);
+FSdata = data(:,sort(selected_features));
 column_names_new = column_names(selected_features);
 
 disp('Features selected:');
 T = table(num2cell(selected_features),cellstr(column_names_new'),num2cell(F_s(1:threshold)),'VariableNames',{'Column_index' 'Feature' 'Score'});
 disp(T);
+
+selected_features = sort(selected_features);
+column_names_new = column_names(selected_features);
 
 end

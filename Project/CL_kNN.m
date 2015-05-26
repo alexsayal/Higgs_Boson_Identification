@@ -1,7 +1,6 @@
 function [ best_performance , best_model , best_K , best_dist ] = CL_kNN(  train , trainlabels , test , testlabels , K , kfold )
 %CL_kNN Summary of this function goes here
 %   Detailed explanation goes here
-parpool('local',4);
 tic
 
 type = {'cityblock','euclidean','hamming','jaccard'};
@@ -17,7 +16,9 @@ meanperf = zeros(numel(k),1);
 
 parfor j=1:numel(k)
     if mod(j,10)==0 || j==1, fprintf('>Run %d out of %d \n',j,numel(k)); end
+    
     [ auxmeanperf ] = CL_kNN_main( cv, k ,dista, j, train, trainlabels, type, kfold);
+    
     meanperf(j) = mean(auxmeanperf);
 
 end
@@ -58,7 +59,7 @@ best_performance = 100*( cm(2,2)/(cm(2,2)+cm(1,2)) + cm(1,1)/(cm(1,1)+cm(2,1)) )
 
 fprintf('Test Accuracy = %f%% \n',best_performance);
 toc
-delete(gcp)
+
 disp('----------------------------');
 
 end
