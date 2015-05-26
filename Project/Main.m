@@ -139,42 +139,58 @@ clear option FRdataTemp threshold;
 Ctrain = FSdata;
 Ctest = FStestdata;
 
-class = {'bayes','fld','svm','kNN','kmeans','mindist'};
-selected = class{4};
+class = {'bayes','fld','linsvm','libsvm','kNN','kmeans','mindist'};
+selected = class{3};
 
 switch selected
     case 'bayes'
         %%---Bayes Classifier
         nfold = 10;
         type = {'df','cls'}; stype = 1;
-        [ CL_bayes_performance , CL_bayes_model ] = CL_bayes( Ctrain , MVYtrain , Ctest , MVYtest , type{stype} , nfold);
+        [ CL_bayes_performance , CL_bayes_model ] = ...
+            CL_bayes( Ctrain , MVYtrain , Ctest , MVYtest , type{stype} , nfold);
 
     case 'fld'
         %%---FLD Classifier
         nfold = 10;
         type = {'linear','quad'}; stype = 1;
-        [ CL_fld_performance , CL_fld_model ] = CL_fld( Ctrain , MVYtrain , Ctest , MVYtest , type{stype} , nfold );
+        [ CL_fld_performance , CL_fld_model ] = ...
+            CL_fld( Ctrain , MVYtrain , Ctest , MVYtest , type{stype} , nfold );
         
-    case 'svm'
-        %%---SVM
+    case 'linsvm'
+        %%---SVM with LibLINEAR
         nfold = 10;
         C = -16:2:16;
-        [ CL_svm_performance , CL_svm_model ] = CL_SVM( Ctrain , MVYtrain , Ctest, MVYtest , C , nfold);
+        [ CL_linsvm_performance , CL_linsvm_model ] = ...
+            CL_linSVM( Ctrain , MVYtrain , Ctest, MVYtest , C , nfold);
+     
+    case 'libsvm'
+        %%---SVM with LibSVM
+        nfold = 10;
+        C = -5:2:15;
+        gamma = -10:2:5;
+        limit = 1000; % Limit the number of events
+        [ CL_libsvm_performance , CL_libsvm_model ] = ...
+            CL_libSVM( Ctrain , MVYtrain , Ctest, MVYtest , C , gamma , nfold, limit);
         
     case 'kNN'
         %%---kNN
         nfold = 10;
-        K = 25:45;
-        [ CL_kNN_performance , CL_kNN_model ] = CL_kNN( Ctrain , MVYtrain , Ctest, MVYtest , K , nfold);
+        K = 20:40;
+        limit = 1000; % Limit the number of events. Set zero for no limit
+        [ CL_kNN_performance , CL_kNN_model ] = ...
+            CL_kNN( Ctrain , MVYtrain , Ctest, MVYtest , K , nfold, limit);
         
     case 'kmeans'
         %%---K-means
         nfold = 10;
-        [ C_kmean_performance , C_kmeans_model ] = C_kmeans( Ctrain , MVYtrain , nfold );
+        [ C_kmean_performance , C_kmeans_model ] = ...
+            C_kmeans( Ctrain , MVYtrain , nfold );
        
-%     case 'mindist'
-%         %%---Minimum Distance
-%         [ performance_mindist , model_mindist ] = CL_mindist( Xtrain , Ytrain , Xtest, Ytest );
+    case 'mindist'
+        %%---Minimum Distance
+        [ CL_mindist_performance , CL_mindist_model ] = ...
+            CL_mindist( Ctrain , MVYtrain , Ctest, MVYtest );
 
 end
 

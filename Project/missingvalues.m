@@ -29,7 +29,8 @@ switch method
             auxtest = MVtest(:,i);
             aux(isnan(aux)) = nanmean(aux);
             MVdata(:,i) = aux;
-            MVtest(isnan(auxtest),:) = aux;
+            auxtest(isnan(auxtest)) = nanmean(aux);
+            MVtest(:,i) = auxtest;
         end
         
     %----Option 2 - Replace for column mode----%
@@ -39,7 +40,8 @@ switch method
             auxtest = MVtest(:,i);
             aux(isnan(aux)) = mode(aux);
             MVdata(:,i) = aux;
-            MVtest(isnan(auxtest),:) = aux;
+            auxtest(isnan(auxtest)) = mode(aux);
+            MVtest(:,i) = auxtest;
         end
         
     %----Option 3 - Replace for class mean----%

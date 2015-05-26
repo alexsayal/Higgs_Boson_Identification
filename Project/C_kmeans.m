@@ -9,7 +9,7 @@ cv = cvpartition(length(train),'kfold',kfold);
 
 best_performance = 0;
 for i=1:kfold
-    fprintf('Run %d out of %d \n',i,kfold);
+    fprintf('Run %d/%d \n',i,kfold);
     %---Training set
     trn.X = train(cv.training(i),:)';
     trn.y = trainlabels(cv.training(i));

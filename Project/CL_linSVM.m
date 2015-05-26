@@ -1,4 +1,4 @@
-function [ best_performance , best_model , best_C ] = CL_SVM( train , trainlabels , test , testlabels , C , folds)
+function [ best_performance , best_model , best_C ] = CL_linSVM( train , trainlabels , test , testlabels , C , folds)
 %CL_SVM Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -10,7 +10,7 @@ data = sparse(train);
 %=====Cross validation and training=====
 cv_acc = zeros(length(C),1);
 for i=1:length(C)
-    fprintf('C %d: ',i);
+    fprintf('C %d/%d: ',i,length(C));
     cv_acc(i) = liblineartrain(labels, data, sprintf('-c %f -s %d -B %d -v %d -q', 2^C(i), 2, 1,  folds));
 end
 
