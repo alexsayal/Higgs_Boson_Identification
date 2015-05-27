@@ -1,7 +1,7 @@
 %%%%% ====== Pattern Recognition Techniques ===== %%%%%
 %%%%% ===== Alexandre Sayal | Sara Oliveira ===== %%%%%
 %%%%% =================== 2015 ================== %%%%%
-%%%%% =========== Project Preprocessing ========= %%%%%
+%%%%% ============ Project Main Script ========== %%%%%
 
 %% Import Data
 clear, clc;
@@ -111,10 +111,10 @@ clear option threshold;
 %% Feature Reduction
 
 %----Create Structure----%
-FRdataTemp.X = FSdata';
-FRdataTemp.y = MVlabels';
-FRdataTemp.dim = size(FSdata,2);
-FRdataTemp.num_data = size(FSdata,1);
+FRdataTemp.X = normtrain';
+FRdataTemp.y = MVYtrain';
+FRdataTemp.dim = size(FRdataTemp.X,1);
+FRdataTemp.num_data = size(FRdataTemp.X,2);
 
 option = 2;
 
@@ -123,11 +123,13 @@ switch option
     case 1
         threshold = 0.40; %---Percentage of Eigenvalues to keep
         [ FRdata , W ] = FeatureReduction( FRdataTemp , 'pca' , threshold );
+        FRtestdata = FStestdata*W;
         
 %----LDA----%        
     case 2
-        threshold = 2; %---Number of features desired
+        threshold = 1; %---Number of features desired
         [ FRdata , W ] = FeatureReduction( FRdataTemp , 'lda' , threshold );
+        FRtestdata = normtest*W;
 end
 
 FRdata = FRdata';
@@ -136,11 +138,11 @@ clear option FRdataTemp threshold;
 
 %% Classification
 
-Ctrain = FSdata;
-Ctest = FStestdata;
+Ctrain = FRdata;
+Ctest = FRtestdata;
 
 class = {'bayes','fld','linsvm','libsvm','kNN','kmeans','mindist'};
-selected = class{3};
+selected = class{7};
 
 switch selected
     case 'bayes'
@@ -189,8 +191,7 @@ switch selected
        
     case 'mindist'
         %%---Minimum Distance
-        [ CL_mindist_performance , CL_mindist_model ] = ...
+        [ CL_mindist_performance , CL_mindist_m1 , CL_mindist_m2 ] = ...
             CL_mindist( Ctrain , MVYtrain , Ctest, MVYtest );
 
 end
-

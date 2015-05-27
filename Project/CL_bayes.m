@@ -1,6 +1,13 @@
 function [ best_performance , best_model ] = CL_bayes( train , trainlabels , test , testlabels , type , kfold )
-%CL_BAYES Summary of this function goes here
-%   Detailed explanation goes here
+%CL_BAYES Bayesian Classifier
+%   train (events x features)
+%   trainlabels (events x 1)
+%   test (events x features)
+%   testlabels (events x 1)
+%   type ('df' or 'cls' - with reject option)
+%   kfold (number of folds for cross-validation)
+%
+%[best_performance,best_model] = CL_bayes(train,trainlabels,test,testlabels,type,kfold)
 
 disp('------ Bayes Classifier ------');
 
