@@ -22,7 +22,7 @@ function varargout = intro(varargin)
 
 % Edit the above text to modify the response to help intro
 
-% Last Modified by GUIDE v2.5 27-May-2015 16:53:49
+% Last Modified by GUIDE v2.5 29-May-2015 00:43:54
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -84,15 +84,17 @@ function start_button_Callback(hObject, eventdata, handles)
 select;
 
 
+% --- Executes on button press in help_button.
+function help_button_Callback(hObject, eventdata, handles)
+% hObject    handle to help_button (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
 % --- Executes on button press in close_button.
 function close_button_Callback(hObject, eventdata, handles)
 % hObject    handle to close_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-
-% --- Executes on button press in pushbutton30.
-function pushbutton30_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton30 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+close all;

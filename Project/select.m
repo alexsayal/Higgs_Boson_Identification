@@ -22,7 +22,7 @@ function varargout = select(varargin)
 
 % Edit the above text to modify the response to help select
 
-% Last Modified by GUIDE v2.5 28-May-2015 21:52:47
+% Last Modified by GUIDE v2.5 29-May-2015 00:46:11
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -117,6 +117,7 @@ tabulate(handles.Ytrain)
 disp('Test Set:')
 tabulate(handles.Ytest)
 
+set(handles.text_left, 'String', sprintf('Load Successful\nCross-Validation by Hold-Out at 75/25%'));
 guidata(hObject, handles);
 
 % --- Executes on button press in load_test_button.
@@ -134,6 +135,7 @@ f = fieldnames(test_data);
 handles.Xtest = testrawdata;
 handles.Ytest = testlabels;
 
+set(handles.text_left, 'String', sprintf('Load Test Successful\nTest Set Replaced'));
 guidata(hObject, handles);
 
 % --- Executes during object creation, after setting all properties.
@@ -151,11 +153,13 @@ function mv_button_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 method = {'mean','mode','removeevents','removefeatures'};
 
-[ handles.MVXtrain , handles.YTrain_touse , handles.MVXtest , handles.YTest_touse, handles.column_names_norm ] ...
+[ handles.MVXtrain , handles.YTrain_touse , handles.MVXtest , handles.YTest_touse, handles.column_names_norm , print ] ...
     = missingvalues( handles.Xtrain , handles.Ytrain , handles.Xtest ,...
     handles.Ytest , handles.column_names, method{handles.mvoption} );
 
 handles.dim = size(handles.MVXtrain,2);
+
+set(handles.text_left, 'String', print);
 guidata(hObject, handles);
 
 % --- Executes when selected object is changed in mv_button_group.
@@ -175,25 +179,26 @@ switch get(eventdata.NewValue,'Tag') % Get Tag of selected object.
 end
 guidata(hObject, handles);
 
-% --- Executes on button press in back_button.
-function back_button_Callback(hObject, eventdata, handles)
-% hObject    handle to back_button (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-
-% --- Executes on button press in clear_button.
-function clear_button_Callback(hObject, eventdata, handles)
-% hObject    handle to clear_button (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-
 % --- Executes on button press in reset_button.
 function reset_button_Callback(hObject, eventdata, handles)
 % hObject    handle to reset_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+set(handles.text_left,'String','');
+set(handles.text_right,'String','');
+set(handles.fs_input,'String','');
+set(handles.cmin_input,'String','');
+set(handles.cmax_input,'String','');
+set(handles.cstep_input,'String','');
+set(handles.gmin_input,'String','');
+set(handles.gmax_input,'String','');
+set(handles.gstep_input,'String','');
+set(handles.kmin_input,'String','');
+set(handles.kmax_input,'String','');
+set(handles.limit_input,'String','1000');
+set(handles.nfold_input,'String','10');
+clear all;
 
 
 % --- Executes on button press in quit_button.
@@ -202,6 +207,7 @@ function quit_button_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+close all;
 
 % --- Executes on button press in class_button.
 function class_button_Callback(hObject, eventdata, handles)
@@ -209,63 +215,80 @@ function class_button_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+set(handles.text_right,'String',' ');
 class = {'bayes','fld','linsvm','libsvm','kNN','mindist','kmeans'};
 selected = class{handles.class_option};
 
 switch selected
     case 'bayes'
         %%---Bayes Classifier
-        nfold = handles.nfold_input;
-        type = {'df','cls'}; 
-        stype = handles.bayes_option;
-        [ handles.CL_bayes_performance , handles.CL_bayes_model ] = ...
-            CL_bayes( handles.XTrain_touse , handles.YTrain_touse , handles.XTest_touse , handles.YTest_touse , type{stype} , nfold);
-
+        nfold = str2double(get(handles.nfold_input,'String')); 
+        type = handles.bayes_option;
+        [ handles.CL_bayes_performance , handles.CL_bayes_model , print] = ...
+            CL_bayes( handles.XTrain_touse , handles.YTrain_touse , handles.XTest_touse , handles.YTest_touse , type , nfold);
+        set(handles.text_right,'String',print);
+        
     case 'fld'
         %%---FLD Classifier
-        nfold = handles.nfold_input;
-        type = {'linear','quad'}; 
-        stype = handles.fld_option;
-        [ handles.CL_fld_performance , handles.CL_fld_model ] = ...
-            CL_fld( handles.XTrain_touse , handles.YTrain_touse , handles.XTest_touse , handles.YTest_touse , type{stype} , nfold);
+        nfold = str2double(get(handles.nfold_input,'String'));
+        type = handles.fld_option;
+        [ handles.CL_fld_performance , handles.CL_fld_model , print] = ...
+            CL_fld( handles.XTrain_touse , handles.YTrain_touse , handles.XTest_touse , handles.YTest_touse , type , nfold);
+        set(handles.text_right,'String',print);
 
     case 'linsvm'
         %%---SVM with LibLINEAR
-        nfold = handles.nfold_input;
-        C = handles.cmin_input:handles.cstep_input:handles.cmax_input;
-        [ handles.CL_linsvm_performance , handles.CL_linsvm_model ] = ...
+        nfold = str2num(get(handles.nfold_input,'String'));
+        Cmin = str2num(get(handles.cmin_input,'String'));
+        Cmax = str2num(get(handles.cmax_input,'String'));
+        Cstep = str2num(get(handles.cstep_input,'String'));
+        C = Cmin:Cstep:Cmax;
+        [ handles.CL_linsvm_performance , handles.CL_linsvm_model , print] = ...
             CL_linSVM( handles.XTrain_touse , handles.YTrain_touse , handles.XTest_touse , handles.YTest_touse, C , nfold);
+        set(handles.text_right,'String',print);
      
     case 'libsvm'
         %%---SVM with LibSVM
-        nfold = handles.nfold_input;
-        C = handles.cmin_input:handles.cstep_input:handles.cmax_input;
-        gamma = handles.gmin_input:handles.gstep_input:handles.gmax_input;
-        limit = handles.limit_input; % Limit the number of events
-        [ handles.CL_libsvm_performance , handles.CL_libsvm_model ] = ...
+        nfold = str2num(get(handles.nfold_input,'String'));
+        Cmin = str2num(get(handles.cmin_input,'String'));
+        Cmax = str2num(get(handles.cmax_input,'String'));
+        Cstep = str2num(get(handles.cstep_input,'String'));
+        C = Cmin:Cstep:Cmax;
+        gmin = str2num(get(handles.gmin_input,'String'));
+        gmax = str2num(get(handles.gmax_input,'String'));
+        gstep = str2num(get(handles.gstep_input,'String'));
+        gamma = gmin:gstep:gmax;
+        limit = str2num(get(handles.limit_input, 'String')); % Limit the number of events
+        [ handles.CL_libsvm_performance , handles.CL_libsvm_model , print] = ...
             CL_libSVM( handles.XTrain_touse , handles.YTrain_touse , handles.XTest_touse , handles.YTest_touse, C , gamma , nfold, limit);
+        set(handles.text_right,'String',print);
         
     case 'kNN'
         %%---kNN
-        nfold = handles.nfold_input;
-        K = 20:40;
-        limit = 1000; % Limit the number of events. Set zero for no limit
-        [ CL_kNN_performance , CL_kNN_model ] = ...
-            CL_kNN( Ctrain , MVYtrain , Ctest, MVYtest , K , nfold, limit);
+        nfold = str2num(get(handles.nfold_input,'String'));
+        Kmin = str2num(get(handles.kmin_input,'String'));
+        Kmax = str2num(get(handles.kmax_input,'String'));
+        K = Kmin:Kmax;
+        limit = str2num(get(handles.limit_input, 'String')); % Limit the number of events
+        [ handles.CL_kNN_performance , handles.CL_kNN_model , print ] = ...
+            CL_kNN(handles.XTrain_touse , handles.YTrain_touse , handles.XTest_touse , handles.YTest_touse , K , nfold, limit);
+        set(handles.text_right,'String',print);
         
     case 'kmeans'
         %%---K-means
-        nfold = handles.nfold_input;
-        [ C_kmean_performance , C_kmeans_model ] = ...
-            C_kmeans( Ctrain , MVYtrain , nfold );
+        nfold = str2num(get(handles.nfold_input,'String'));
+        [ handles.C_kmean_performance , handles.C_kmeans_model , print] = ...
+            C_kmeans( handles.XTrain_touse , handles.YTrain_touse , nfold );
+       set(handles.text_right,'String',print);
        
     case 'mindist'
         %%---Minimum Distance
-        [ CL_mindist_performance , CL_mindist_m1 , CL_mindist_m2 ] = ...
-            CL_mindist( Ctrain , MVYtrain , Ctest, MVYtest );
-
+        [ handles.CL_mindist_performance , handles.CL_mindist_m1 , handles.CL_mindist_m2 , print] = ...
+            CL_mindist( handles.XTrain_touse , handles.YTrain_touse , handles.XTest_touse , handles.YTest_touse );
+        set(handles.text_right,'String',print);
+        
 end
-
+guidata(hObject, handles);
 
 function nfold_input_Callback(hObject, eventdata, handles)
 % hObject    handle to nfold_input (see GCBO)
@@ -296,6 +319,7 @@ function bayes_button_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 handles.class_option = 1;
+set(handles.text_right,'String',sprintf('Bayesian Classifier Selected.\nPlease Choose Type (default or reject option).'));
 guidata(hObject,handles);
 
 % --- Executes on button press in fld_button.
@@ -305,6 +329,7 @@ function fld_button_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 handles.class_option = 2;
+set(handles.text_right,'String',sprintf('Fisher Linear Discriminant Classifier Selected.\nPlease Choose Type (linear or quadratic).'));
 guidata(hObject,handles);
 
 % --- Executes on button press in svm_button.
@@ -314,6 +339,7 @@ function svm_button_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 handles.class_option = 3;
+set(handles.text_right,'String',sprintf('LibLinear SVM Classifier Selected.\nPlease Set C Values.'));
 guidata(hObject,handles);
 
 % --- Executes on button press in libsvm_button.
@@ -323,6 +349,7 @@ function libsvm_button_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 handles.class_option = 4;
+set(handles.text_right,'String',sprintf('LibSVM Classifier Selected.\nPlease Set C and Gamma Values\nMind the event number limit (default is 1000).'));
 guidata(hObject,handles);
 
 % --- Executes on button press in knn_button.
@@ -332,6 +359,7 @@ function knn_button_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 handles.class_option = 5;
+set(handles.text_right,'String',sprintf('k-NN Classifier Selected.\nPlease Set K Values\nMind the event number limit (default is 1000).'));
 guidata(hObject,handles);
 
 % --- Executes on button press in min_dist_button.
@@ -341,6 +369,7 @@ function min_dist_button_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 handles.class_option = 6;
+set(handles.text_right,'String',sprintf('Minimum Distance Classifier Selected.\nEuclidian distance.'));
 guidata(hObject,handles);
 
 % --- Executes on button press in k_means_button.
@@ -350,6 +379,7 @@ function k_means_button_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 handles.class_option = 7;
+set(handles.text_right,'String',sprintf('k-Means Classifier Selected.'));
 guidata(hObject,handles);
 
 % --- Executes on button press in fr_button.
@@ -376,6 +406,7 @@ switch option
         else
             [ handles.XTrain_touse , W ] = FeatureReduction( FRdataTemp , 'pca' , str2num(threshold));
             handles.XTest_touse = handles.XTest_touse*W;
+            set(handles.text_left, 'String', sprintf('PCA executed.\n%d Principal Components.',size(W,2)));
         end
 %----LDA----%        
     case 2
@@ -391,6 +422,7 @@ switch option
         else
             [ handles.XTrain_touse , W ] = FeatureReduction( FRdataTemp , 'lda' , str2num(threshold));
             handles.XTest_touse = handles.XTest_touse*W;
+            set(handles.text_left, 'String', 'LDA executed');
         end
 end
 
@@ -427,6 +459,7 @@ function pca_button_Callback(hObject, eventdata, handles)
 % hObject    handle to pca_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
 set(handles.fr_input,'Visible','on');
 handles.fr_option = 1;
 set(handles.fr_text,'String','EIGENVALUE PERCENTAGE:','Visible','On');
@@ -437,6 +470,7 @@ function lda_button_Callback(hObject, eventdata, handles)
 % hObject    handle to lda_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
 set(handles.fr_input,'Visible','on');
 handles.fr_option = 2;
 set(handles.fr_text,'String','NUMBER OF FEATURES:','Visible','On');
@@ -468,9 +502,11 @@ switch handles.fs_option
         elseif str2num(threshold)>handles.dim
             warndlg(strcat('Input must be <= ',{' '},num2str(handles.dim))); 
         else
-            [handles.XTrain_touse , handles.column_names , FSfeatures] = FS_kruskal( handles.XTrain_touse , handles.YTrain_touse , handles.column_names , str2num(threshold) );
+            [handles.XTrain_touse , handles.column_names , FSfeatures,print] = FS_kruskal( handles.XTrain_touse , handles.YTrain_touse , handles.column_names , str2num(threshold) );
             handles.XTest_touse = handles.XTest_touse(:,FSfeatures);
+            set(handles.text_left,'String',print);
         end
+        
 %----Correlation between features----%   
     case 2
         threshold = get(handles.fs_input,'String'); %---Correlation cut-off value
@@ -479,8 +515,9 @@ switch handles.fs_option
         elseif str2num(threshold)<=0 || str2num(threshold)>1
             warndlg('Input must be a value between 0 and 1');
         else
-            [handles.XTrain_touse , handles.column_names , FSfeatures] = FS_corr( handles.XTrain_touse , handles.YTrain_touse , handles.column_names , 'feat' ,str2num(threshold));
+            [handles.XTrain_touse , handles.column_names , FSfeatures, print] = FS_corr( handles.XTrain_touse , handles.YTrain_touse , handles.column_names , 'feat' ,str2num(threshold));
             handles.XTest_touse = handles.XTest_touse(:,FSfeatures);
+            set(handles.text_left,'String',print);
         end
 %----Correlation between features and labels----% 
     case 3
@@ -490,8 +527,9 @@ switch handles.fs_option
         elseif str2num(threshold)<=0 || str2num(threshold)>1
             warndlg('Input must be a value between 0 and 1');
         else
-            [handles.XTrain_touse , handles.column_names , FSfeatures] = FS_corr( handles.XTrain_touse , handles.YTrain_touse , handles.column_names , 'featlabel' , str2num(threshold));
+            [handles.XTrain_touse , handles.column_names , FSfeatures, print] = FS_corr( handles.XTrain_touse , handles.YTrain_touse , handles.column_names , 'featlabel' , str2num(threshold));
             handles.XTest_touse = handles.XTest_touse(:,FSfeatures);
+            set(handles.text_left,'String',print);
         end
 %----mRMR----% 
     case 4
@@ -505,8 +543,9 @@ switch handles.fs_option
         elseif str2num(threshold)>handles.dim
             warndlg(strcat('Input must be <= ',{' '},num2str(handles.dim))); 
         else
-            [handles.XTrain_touse , handles.column_names , FSfeatures] = FS_mRMR( handles.XTrain_touse , handles.YTrain_touse , handles.column_names , str2num(threshold));
+            [handles.XTrain_touse , handles.column_names , FSfeatures, print] = FS_mRMR( handles.XTrain_touse , handles.YTrain_touse , handles.column_names , str2num(threshold));
             handles.XTest_touse = handles.XTest_touse(:,FSfeatures);
+            set(handles.text_left,'String',print);
         end
         
 %----Area under curve----% 
@@ -517,8 +556,9 @@ switch handles.fs_option
         elseif str2num(threshold)<=0 || str2num(threshold)>1
             warndlg('Input must be a value between 0 and 1');
         else
-            [handles.XTrain_touse , handles.column_names , FSfeatures] = FS_AUC( handles.XTrain_touse , handles.YTrain_touse , handles.column_names , str2num(threshold));
+            [handles.XTrain_touse , handles.column_names , FSfeatures,print] = FS_AUC( handles.XTrain_touse , handles.YTrain_touse , handles.column_names , str2num(threshold));
             handles.XTest_touse = handles.XTest_touse(:,FSfeatures);
+            set(handles.text_left,'String',print);
         end
 %----Fisher Score----% 
     case 6
@@ -532,8 +572,9 @@ switch handles.fs_option
         elseif str2num(threshold)>handles.dim
             warndlg(strcat('Input must be <= ',{' '},num2str(handles.dim))); 
         else
-            [handles.XTrain_touse , handles.column_names , FSfeatures] = FS_fisher(handles.XTrain_touse , handles.YTrain_touse , handles.column_names, str2num(threshold)); 
-            handles.XTest_touse = handles.XTest_touse(:,FSfeatures);  
+            [handles.XTrain_touse , handles.column_names , FSfeatures,print] = FS_fisher(handles.XTrain_touse , handles.YTrain_touse , handles.column_names, str2num(threshold)); 
+            handles.XTest_touse = handles.XTest_touse(:,FSfeatures); 
+            set(handles.text_left,'String',print);
         end
 end
 guidata(hObject,handles);
@@ -566,6 +607,7 @@ function kw_pushbutton_Callback(hObject, eventdata, handles)
 % hObject    handle to kw_pushbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
 set(handles.fs_input,'Visible','on');
 handles.fs_option = 1;
 set(handles.fs_text,'String','NUMBER OF FEATURES:','Visible','On');
@@ -577,6 +619,7 @@ function fc_button_Callback(hObject, eventdata, handles)
 % hObject    handle to fc_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
 set(handles.fs_input,'Visible','on');
 handles.fs_option = 2;
 set(handles.fs_text,'String','CUT-OFF VALUE:','Visible','On');
@@ -588,6 +631,7 @@ function fl_button_Callback(hObject, eventdata, handles)
 % hObject    handle to fl_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
 set(handles.fs_input,'Visible','on');
 handles.fs_option = 3;
 set(handles.fs_text,'String','CUT-OFF VALUE:','Visible','On');
@@ -598,6 +642,7 @@ function mRMR_button_Callback(hObject, eventdata, handles)
 % hObject    handle to mRMR_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
 set(handles.fs_input,'Visible','on');
 handles.fs_option = 4;
 set(handles.fs_text,'String','NUMBER OF FEATURES:','Visible','On');
@@ -608,6 +653,7 @@ function auc_button_Callback(hObject, eventdata, handles)
 % hObject    handle to auc_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
 set(handles.fs_input,'Visible','on');
 handles.fs_option = 5;
 set(handles.fs_text,'String','CUT-OFF VALUE:','Visible','On');
@@ -618,6 +664,7 @@ function fisher_score_button_Callback(hObject, eventdata, handles)
 % hObject    handle to fisher_score_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
 set(handles.fs_input,'Visible','on');
 handles.fs_option = 6;
 set(handles.fs_text,'String','NUMBER OF FEATURES:','Visible','On');
@@ -629,7 +676,7 @@ function norm_button_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-[handles.XTrain_touse , m , sigma ] = scalestd(handles.MVXtrain);
+[handles.XTrain_touse , m , sigma , print] = scalestd(handles.MVXtrain);
 handles.XTest_touse = scalestd(handles.MVXtest,m,sigma);
 
 handles.XTrain_norm = handles.XTrain_touse;
@@ -640,6 +687,7 @@ handles.column_names = handles.column_names_norm;
 
 handles.fr_run = 'false';
 
+set(handles.text_left, 'String', print);
 guidata(hObject,handles);
 
 % --- Executes on button press in mean_radio.
@@ -1052,3 +1100,155 @@ function kmin_input_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+
+function edit29_Callback(hObject, eventdata, handles)
+% hObject    handle to kmin_input (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of kmin_input as text
+%        str2double(get(hObject,'String')) returns contents of kmin_input as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function edit29_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to kmin_input (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function edit30_Callback(hObject, eventdata, handles)
+% hObject    handle to kmax_input (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of kmax_input as text
+%        str2double(get(hObject,'String')) returns contents of kmax_input as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function edit30_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to kmax_input (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function edit31_Callback(hObject, eventdata, handles)
+% hObject    handle to edit31 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit31 as text
+%        str2double(get(hObject,'String')) returns contents of edit31 as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function edit31_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit31 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function edit26_Callback(hObject, eventdata, handles)
+% hObject    handle to cmin_input (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of cmin_input as text
+%        str2double(get(hObject,'String')) returns contents of cmin_input as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function edit26_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to cmin_input (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function edit27_Callback(hObject, eventdata, handles)
+% hObject    handle to cmax_input (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of cmax_input as text
+%        str2double(get(hObject,'String')) returns contents of cmax_input as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function edit27_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to cmax_input (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function edit28_Callback(hObject, eventdata, handles)
+% hObject    handle to cstep_input (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of cstep_input as text
+%        str2double(get(hObject,'String')) returns contents of cstep_input as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function edit28_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to cstep_input (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes during object creation, after setting all properties.
+function text_right_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to text_right (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+
+% --- Executes on button press in help_button.
+function help_button_Callback(hObject, eventdata, handles)
+% hObject    handle to help_button (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
