@@ -1,4 +1,4 @@
-function [ best_performance , best_model , best_C ] = CL_linSVM( train , trainlabels , test , testlabels , C , folds)
+function [ best_performance2 , best_model , best_C, print ] = CL_linSVM( train , trainlabels , test , testlabels , C , folds)
 %CL_SVM Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -18,6 +18,16 @@ end
 [best_performance,idx] = max(cv_acc);
 best_C = 2^C(idx);
 
+%---Plot C---
+figure();
+    plot(C,cv_acc,'--o',C(idx),best_performance,'rx');
+    grid on;
+    xlabel('log_2(C)'); ylabel('Cross-Validation Accuracy');
+    xlim([min(C) max(C)]);
+    title('Cross-Validation Accuracy');
+    text(C(idx)+0.5, best_performance, sprintf('Acc = %.2f %%',best_performance), ...
+        'HorizontalAlign','left', 'VerticalAlign','top')
+
 fprintf('Cross Validation maximum Accuracy = %f%% \n',best_performance);
 fprintf('Best C = %f \n',best_C);
 
@@ -26,9 +36,10 @@ best_model = liblineartrain(labels, data, ...
                     sprintf('-c %f -s %d -B %d -q', best_C , 2 , 1));
 
 
-[~,best_performance,~] = liblinearpredict(testlabels, sparse(test), best_model, '-q');
+[~,best_performance2,~] = liblinearpredict(testlabels, sparse(test), best_model, '-q');
 
-fprintf('Test Accuracy = %f%% \n',best_performance(1));
+fprintf('Test Accuracy = %f%% \n',best_performance2(1));
 disp('------------------------------');
 
+print = sprintf('------ SVM Classifier ------ \nCross Validation maximum Accuracy = %f%% \nTest Accuracy = %f%% \n------------------------------',best_performance,best_performance2);
 end

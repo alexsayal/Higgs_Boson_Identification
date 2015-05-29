@@ -1,18 +1,18 @@
-function varargout = select(varargin)
-%SELECT M-file for select.fig
-%      SELECT, by itself, creates a new SELECT or raises the existing
+function varargout = GUI_Main(varargin)
+%GUI_MAIN M-file for GUI_Main.fig
+%      GUI_MAIN, by itself, creates a new GUI_MAIN or raises the existing
 %      singleton*.
 %
-%      H = SELECT returns the handle to a new SELECT or the handle to
+%      H = GUI_MAIN returns the handle to a new GUI_MAIN or the handle to
 %      the existing singleton*.
 %
-%      SELECT('Property','Value',...) creates a new SELECT using the
+%      GUI_MAIN('Property','Value',...) creates a new GUI_MAIN using the
 %      given property value pairs. Unrecognized properties are passed via
-%      varargin to select_OpeningFcn.  This calling syntax produces a
+%      varargin to GUI_Main_OpeningFcn.  This calling syntax produces a
 %      warning when there is an existing singleton*.
 %
-%      SELECT('CALLBACK') and SELECT('CALLBACK',hObject,...) call the
-%      local function named CALLBACK in SELECT.M with the given input
+%      GUI_MAIN('CALLBACK') and GUI_MAIN('CALLBACK',hObject,...) call the
+%      local function named CALLBACK in GUI_MAIN.M with the given input
 %      arguments.
 %
 %      *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
@@ -20,16 +20,16 @@ function varargout = select(varargin)
 %
 % See also: GUIDE, GUIDATA, GUIHANDLES
 
-% Edit the above text to modify the response to help select
+% Edit the above text to modify the response to help GUI_Main
 
-% Last Modified by GUIDE v2.5 29-May-2015 00:46:11
+% Last Modified by GUIDE v2.5 29-May-2015 15:31:50
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
                    'gui_Singleton',  gui_Singleton, ...
-                   'gui_OpeningFcn', @select_OpeningFcn, ...
-                   'gui_OutputFcn',  @select_OutputFcn, ...
+                   'gui_OpeningFcn', @GUI_Main_OpeningFcn, ...
+                   'gui_OutputFcn',  @GUI_Main_OutputFcn, ...
                    'gui_LayoutFcn',  [], ...
                    'gui_Callback',   []);
 if nargin && ischar(varargin{1})
@@ -44,8 +44,8 @@ end
 % End initialization code - DO NOT EDIT
 
 
-% --- Executes just before select is made visible.
-function select_OpeningFcn(hObject, eventdata, handles, varargin)
+% --- Executes just before GUI_Main is made visible.
+function GUI_Main_OpeningFcn(hObject, eventdata, handles, varargin)
 % This function has no output args, see OutputFcn.
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -53,18 +53,20 @@ function select_OpeningFcn(hObject, eventdata, handles, varargin)
 % varargin   unrecognized PropertyName/PropertyValue pairs from the
 %            command line (see VARARGIN)
 
-% Choose default command line output for select
+movegui(gcf,'center')
+
+% Choose default command line output for GUI_Main
 handles.output = hObject;
 
 % Update handles structure
 guidata(hObject, handles);
 
-% UIWAIT makes select wait for user response (see UIRESUME)
+% UIWAIT makes GUI_Main wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
 
 
 % --- Outputs from this function are returned to the command line.
-function varargout = select_OutputFcn(hObject, eventdata, handles)
+function varargout = GUI_Main_OutputFcn(hObject, eventdata, handles)
 % varargout  cell array for returning output args (see VARARGOUT);
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -473,7 +475,7 @@ function lda_button_Callback(hObject, eventdata, handles)
 
 set(handles.fr_input,'Visible','on');
 handles.fr_option = 2;
-set(handles.fr_text,'String','NUMBER OF FEATURES:','Visible','On');
+set(handles.fr_text,'String','NUMBER OF COMPONENTS:','Visible','On');
 guidata(hObject,handles);
 
 
@@ -1252,3 +1254,4 @@ function help_button_Callback(hObject, eventdata, handles)
 % hObject    handle to help_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+GUI_Help;
