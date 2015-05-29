@@ -56,7 +56,7 @@ tabulate(Ytest)
 method = {'mean','mode','removeevents','removefeatures'};
 
 [ MVXtrain , MVYtrain , MVXtest , MVYtest, MVcolumn_names ] ...
-    = missingvalues( Xtrain , Ytrain , Xtest , Ytest , column_names, method{4} );
+    = missingvalues( Xtrain , Ytrain , Xtest , Ytest , column_names, method{3} );
 
 clear method;
 

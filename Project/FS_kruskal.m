@@ -1,4 +1,4 @@
-function [ FSdata , column_names_new , selected_features ] = FS_kruskal( data , labels , column_names , threshold )
+function [ FSdata , column_names_new , selected_features, print ] = FS_kruskal( data , labels , column_names , threshold )
 %KRUSKAL-WALLIS for Feature Selection
 %   data(events x features)
 %   labels (events x 1)
@@ -37,5 +37,6 @@ figure();
     legend('\chi^2',strcat('Threshold=',num2str(threshold)));
 
 disp('Kruskal-Wallis Test executed.');
+print = sprintf('Kruskal-Wallis Test executed.\n%d Features selected.',length(selected_features));
 
 end

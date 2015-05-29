@@ -1,4 +1,4 @@
-function [ MVdata , labels_new , MVtest , test_labels_new, column_names_new ] = missingvalues( data , labels , test , testlabels , column_names , method )
+function [ MVdata , labels_new , MVtest , test_labels_new, column_names_new, print ] = missingvalues( data , labels , test , testlabels , column_names , method )
 %MISSING VALUES Removes missing values from data
 %   Possible methods - 'mean' , 'mode' , 'meanclass' , 'removeevents' ,
 %   'removefeatures'
@@ -100,4 +100,5 @@ end
 fprintf('\n%d missing values successfully replaced/removed from train set.\n',nannum);
 fprintf('%d missing values successfully replaced/removed from test set.\n',testnannum);
 
+print = sprintf('%d missing values successfully replaced/removed from train set.\n%d missing values successfully replaced/removed from test set.\n',nannum,testnannum);
 end

@@ -1,4 +1,4 @@
-function [ best_performance , best_model , best_K , best_dist ] = CL_kNN(  ttrain , ttrainlabels , ttest , ttestlabels , K , kfold , limit )
+function [ best_performance2 , best_model , best_K , best_dist , print] = CL_kNN(  ttrain , ttrainlabels , ttest , ttestlabels , K , kfold , limit )
 %CL_kNN Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -8,12 +8,13 @@ type = {'cityblock','euclidean','hamming','jaccard'};
 
 if limit==0
     limit = size(ttrain,1);
+    limittest = size(ttest,1);
 end
 
 train = ttrain(1:limit,:);
 trainlabels = ttrainlabels(1:limit);
-test = ttest(1:limit,:);
-testlabels = ttestlabels(1:limit);
+test = ttest(1:limittest,:);
+testlabels = ttestlabels(1:limittest);
 
 %=====Cross validation and Training=====
 tic
@@ -40,10 +41,11 @@ best_dist = type{dista(idx)};
 best_model=fitcknn(train,trainlabels,'NumNeighbors',best_K,'Distance',type{dista(idx)});
 
 fprintf('Cross Validation Maximum Accuracy = %f%% \n',best_performance);
-fprintf('Best K = %f \n',best_K);
+fprintf('Best K = %d \n',best_K);
 fprintf('Best distance metric is %s \n',best_dist);
 
 %--- Plot
+figure()
 imagesc(K, 1:length(type), reshape(meanperf,size(k))), colorbar, grid on;
 ylim([0.5 length(type)+0.5]); xlim([K(1)-0.5 K(end)+0.5]);
 set(gca, 'YTick', 1:length(type), 'YTickLabel', type);
@@ -63,11 +65,14 @@ ftest.num_data = size(ftest.X,1);
 %---Test
 ypred = predict(best_model,ftest.X);
 [~,cm,~,~] = confusion(ypred'-ones(1,ftest.num_data),ftest.y'-ones(1,ftest.num_data));
-best_performance = 100*( cm(2,2)/(cm(2,2)+cm(1,2)) + cm(1,1)/(cm(1,1)+cm(2,1)) )/2;
+best_performance2 = 100*( cm(2,2)/(cm(2,2)+cm(1,2)) + cm(1,1)/(cm(1,1)+cm(2,1)) )/2;
 
-fprintf('Test Accuracy = %f%% \n',best_performance);
+fprintf('Test Accuracy = %f%% \n',best_performance2);
 
 disp('----------------------------');
+
+
+print = sprintf('------ k-NN Classifier ------ \nCross Validation maximum Accuracy = %f%% \n------------------------------',best_performance);
 
 end
 

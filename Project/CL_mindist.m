@@ -1,4 +1,4 @@
-function [ best_performance , m1 , m2 ] = CL_mindist(  train , trainlabels , test , testlabels )
+function [ best_performance , m1 , m2 , print ] = CL_mindist(  train , trainlabels , test , testlabels )
 %CL_DMINDIST Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -38,5 +38,7 @@ best_performance = 100*( cm(2,2)/(cm(2,2)+cm(1,2)) + cm(1,1)/(cm(1,1)+cm(2,1)) )
 
 fprintf('Test Accuracy = %f%% \n',best_performance);
 disp('----------------------------');
+
+print = sprintf('------ Minimum Distance Classifier ------ \nTest Accuracy = %f%% \n------------------------------',best_performance);
 
 end

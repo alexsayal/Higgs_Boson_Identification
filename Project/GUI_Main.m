@@ -22,7 +22,7 @@ function varargout = GUI_Main(varargin)
 
 % Edit the above text to modify the response to help GUI_Main
 
-% Last Modified by GUIDE v2.5 29-May-2015 15:31:50
+% Last Modified by GUIDE v2.5 29-May-2015 20:38:55
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -82,8 +82,6 @@ function load_button_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-%clear, clc;
-
 load higgs_data.mat;
 
 [handles.rawlabels,handles.eventID,handles.rawcolumn_names,handles.rawdata] = ...
@@ -119,7 +117,7 @@ tabulate(handles.Ytrain)
 disp('Test Set:')
 tabulate(handles.Ytest)
 
-set(handles.text_left, 'String', sprintf('Load Successful\nCross-Validation by Hold-Out at 75/25%'));
+set(handles.text_left, 'String', sprintf('Load Successful.\nCross-Validation by Hold-Out at 75/25% executed.'));
 guidata(hObject, handles);
 
 % --- Executes on button press in load_test_button.
@@ -137,7 +135,7 @@ f = fieldnames(test_data);
 handles.Xtest = testrawdata;
 handles.Ytest = testlabels;
 
-set(handles.text_left, 'String', sprintf('Load Test Successful\nTest Set Replaced'));
+set(handles.text_left, 'String', sprintf('Load Test Successful.\nTest Set Replaced.'));
 guidata(hObject, handles);
 
 % --- Executes during object creation, after setting all properties.
@@ -424,7 +422,7 @@ switch option
         else
             [ handles.XTrain_touse , W ] = FeatureReduction( FRdataTemp , 'lda' , str2num(threshold));
             handles.XTest_touse = handles.XTest_touse*W;
-            set(handles.text_left, 'String', 'LDA executed');
+            set(handles.text_left, 'String', sprintf('LDA executed.\n%d Components.',threshold));
         end
 end
 
@@ -432,7 +430,6 @@ handles.XTest_touse = handles.XTest_touse';
 handles.fr_run = 'true';
 
 guidata(hObject,handles);
-
 
 function fr_input_Callback(hObject, eventdata, handles)
 % hObject    handle to fr_input (see GCBO)
@@ -488,7 +485,14 @@ function fs_button_Callback(hObject, eventdata, handles)
 if strcmp(handles.fr_run,'true')
     handles.XTrain_touse = handles.XTrain_norm;
     handles.XTest_touse = handles.XTest_norm;
+    handles.column_names = handles.column_names_norm;
     handles.fr_run = 'false';
+end
+if strcmp(handles.fs_run,'true')
+    handles.XTrain_touse = handles.XTrain_norm;
+    handles.XTest_touse = handles.XTest_norm;
+    handles.column_names = handles.column_names_norm;
+    handles.fs_run = 'false';
 end
 
 switch handles.fs_option
@@ -579,6 +583,8 @@ switch handles.fs_option
             set(handles.text_left,'String',print);
         end
 end
+
+handles.fs_run = 'true';
 guidata(hObject,handles);
 
 
@@ -687,63 +693,11 @@ handles.column_names_norm = handles.column_names;
 
 handles.column_names = handles.column_names_norm;
 
+handles.fs_run = 'false';
 handles.fr_run = 'false';
 
 set(handles.text_left, 'String', print);
 guidata(hObject,handles);
-
-% --- Executes on button press in mean_radio.
-function mean_radio_Callback(hObject, eventdata, handles)
-% hObject    handle to mean_radio (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of mean_radio
-
-
-% --- Executes on button press in mode_radio.
-function mode_radio_Callback(hObject, eventdata, handles)
-% hObject    handle to mode_radio (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of mode_radio
-
-
-% --- Executes on button press in events_radio.
-function events_radio_Callback(hObject, eventdata, handles)
-% hObject    handle to events_radio (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of events_radio
-
-
-% --- Executes on button press in features_radio.
-function features_radio_Callback(hObject, eventdata, handles)
-% hObject    handle to features_radio (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of features_radio
-
-
-% --- Executes during object creation, after setting all properties.
-function mean_radio_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to mean_radio (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-
-
-function limit_input_Callback(hObject, eventdata, handles)
-% hObject    handle to limit_input (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of limit_input as text
-%        str2double(get(hObject,'String')) returns contents of limit_input as a double
-
 
 % --- Executes during object creation, after setting all properties.
 function limit_input_CreateFcn(hObject, eventdata, handles)
@@ -757,40 +711,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
-
-% --- Executes on selection change in fld_popup_input.
-function fld_popup_input_Callback(hObject, eventdata, handles)
-% hObject    handle to fld_popup_input (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: contents = cellstr(get(hObject,'String')) returns fld_popup_input contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from fld_popup_input
-
-
-% --- Executes during object creation, after setting all properties.
-function fld_popup_input_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to fld_popup_input (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: popupmenu controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
-
-
-function cmin_input_Callback(hObject, eventdata, handles)
-% hObject    handle to cmin_input (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of cmin_input as text
-%        str2double(get(hObject,'String')) returns contents of cmin_input as a double
-
-
 % --- Executes during object creation, after setting all properties.
 function cmin_input_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to cmin_input (see GCBO)
@@ -802,17 +722,6 @@ function cmin_input_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-
-
-
-function cmax_input_Callback(hObject, eventdata, handles)
-% hObject    handle to cmax_input (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of cmax_input as text
-%        str2double(get(hObject,'String')) returns contents of cmax_input as a double
-
 
 % --- Executes during object creation, after setting all properties.
 function cmax_input_CreateFcn(hObject, eventdata, handles)
@@ -826,17 +735,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
-
-
-function cstep_input_Callback(hObject, eventdata, handles)
-% hObject    handle to cstep_input (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of cstep_input as text
-%        str2double(get(hObject,'String')) returns contents of cstep_input as a double
-
-
 % --- Executes during object creation, after setting all properties.
 function cstep_input_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to cstep_input (see GCBO)
@@ -848,17 +746,6 @@ function cstep_input_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-
-
-
-function gmin_input_Callback(hObject, eventdata, handles)
-% hObject    handle to gmin_input (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of gmin_input as text
-%        str2double(get(hObject,'String')) returns contents of gmin_input as a double
-
 
 % --- Executes during object creation, after setting all properties.
 function gmin_input_CreateFcn(hObject, eventdata, handles)
@@ -872,17 +759,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
-
-
-function gmax_input_Callback(hObject, eventdata, handles)
-% hObject    handle to gmax_input (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of gmax_input as text
-%        str2double(get(hObject,'String')) returns contents of gmax_input as a double
-
-
 % --- Executes during object creation, after setting all properties.
 function gmax_input_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to gmax_input (see GCBO)
@@ -895,17 +771,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
-
-
-function gstep_input_Callback(hObject, eventdata, handles)
-% hObject    handle to gstep_input (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of gstep_input as text
-%        str2double(get(hObject,'String')) returns contents of gstep_input as a double
-
-
 % --- Executes during object creation, after setting all properties.
 function gstep_input_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to gstep_input (see GCBO)
@@ -917,75 +782,6 @@ function gstep_input_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-
-
-% --- Executes on selection change in bayes_popup_input.
-function bayes_popup_input_Callback(hObject, eventdata, handles)
-% hObject    handle to bayes_popup_input (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: contents = cellstr(get(hObject,'String')) returns bayes_popup_input contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from bayes_popup_input
-
-
-% --- Executes during object creation, after setting all properties.
-function bayes_popup_input_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to bayes_popup_input (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: popupmenu controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
-
-% --- Executes on button press in radiobutton16.
-function radiobutton16_Callback(hObject, eventdata, handles)
-% hObject    handle to radiobutton16 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of radiobutton16
-
-
-% --- Executes on button press in radiobutton15.
-function radiobutton15_Callback(hObject, eventdata, handles)
-% hObject    handle to radiobutton15 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of radiobutton15
-
-
-% --- Executes on button press in radiobutton11.
-function radiobutton11_Callback(hObject, eventdata, handles)
-% hObject    handle to radiobutton11 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of radiobutton11
-
-
-% --- Executes on button press in radiobutton12.
-function radiobutton12_Callback(hObject, eventdata, handles)
-% hObject    handle to radiobutton12 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of radiobutton12
-
-
-% --- Executes on button press in df_bayes_radio.
-function df_bayes_radio_Callback(hObject, eventdata, handles)
-% hObject    handle to df_bayes_radio (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of df_bayes_radio
-
 
 % --- Executes when selected object is changed in bayes_panel.
 function bayes_panel_SelectionChangedFcn(hObject, eventdata, handles)
@@ -1034,40 +830,6 @@ function fld_panel_CreateFcn(hObject, eventdata, handles)
 handles.fld_option = 'linear';
 guidata(hObject, handles);
 
-
-
-function edit25_Callback(hObject, eventdata, handles)
-% hObject    handle to edit25 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of edit25 as text
-%        str2double(get(hObject,'String')) returns contents of edit25 as a double
-
-
-% --- Executes during object creation, after setting all properties.
-function edit25_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to edit25 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
-
-
-function kmax_input_Callback(hObject, eventdata, handles)
-% hObject    handle to kmax_input (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of kmax_input as text
-%        str2double(get(hObject,'String')) returns contents of kmax_input as a double
-
-
 % --- Executes during object creation, after setting all properties.
 function kmax_input_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to kmax_input (see GCBO)
@@ -1080,17 +842,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
-
-
-function kmin_input_Callback(hObject, eventdata, handles)
-% hObject    handle to kmin_input (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of kmin_input as text
-%        str2double(get(hObject,'String')) returns contents of kmin_input as a double
-
-
 % --- Executes during object creation, after setting all properties.
 function kmin_input_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to kmin_input (see GCBO)
@@ -1102,145 +853,6 @@ function kmin_input_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-
-
-
-function edit29_Callback(hObject, eventdata, handles)
-% hObject    handle to kmin_input (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of kmin_input as text
-%        str2double(get(hObject,'String')) returns contents of kmin_input as a double
-
-
-% --- Executes during object creation, after setting all properties.
-function edit29_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to kmin_input (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
-
-
-function edit30_Callback(hObject, eventdata, handles)
-% hObject    handle to kmax_input (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of kmax_input as text
-%        str2double(get(hObject,'String')) returns contents of kmax_input as a double
-
-
-% --- Executes during object creation, after setting all properties.
-function edit30_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to kmax_input (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
-
-
-function edit31_Callback(hObject, eventdata, handles)
-% hObject    handle to edit31 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of edit31 as text
-%        str2double(get(hObject,'String')) returns contents of edit31 as a double
-
-
-% --- Executes during object creation, after setting all properties.
-function edit31_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to edit31 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
-
-
-function edit26_Callback(hObject, eventdata, handles)
-% hObject    handle to cmin_input (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of cmin_input as text
-%        str2double(get(hObject,'String')) returns contents of cmin_input as a double
-
-
-% --- Executes during object creation, after setting all properties.
-function edit26_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to cmin_input (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
-
-
-function edit27_Callback(hObject, eventdata, handles)
-% hObject    handle to cmax_input (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of cmax_input as text
-%        str2double(get(hObject,'String')) returns contents of cmax_input as a double
-
-
-% --- Executes during object creation, after setting all properties.
-function edit27_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to cmax_input (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
-
-
-function edit28_Callback(hObject, eventdata, handles)
-% hObject    handle to cstep_input (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of cstep_input as text
-%        str2double(get(hObject,'String')) returns contents of cstep_input as a double
-
-
-% --- Executes during object creation, after setting all properties.
-function edit28_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to cstep_input (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
 
 % --- Executes during object creation, after setting all properties.
 function text_right_CreateFcn(hObject, eventdata, handles)
@@ -1255,3 +867,131 @@ function help_button_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 GUI_Help;
+
+
+% --- Executes on button press in mean_radio.
+function mean_radio_Callback(hObject, eventdata, handles)
+% hObject    handle to mean_radio (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of mean_radio
+
+
+% --- Executes on button press in mode_radio.
+function mode_radio_Callback(hObject, eventdata, handles)
+% hObject    handle to mode_radio (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of mode_radio
+
+
+% --- Executes on button press in events_radio.
+function events_radio_Callback(hObject, eventdata, handles)
+% hObject    handle to events_radio (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of events_radio
+
+
+% --- Executes on button press in features_radio.
+function features_radio_Callback(hObject, eventdata, handles)
+% hObject    handle to features_radio (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of features_radio
+
+
+% --- Executes on button press in df_bayes_radio.
+function df_bayes_radio_Callback(hObject, eventdata, handles)
+% hObject    handle to df_bayes_radio (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of df_bayes_radio
+
+
+% --- Executes on button press in cls_bayes_radio.
+function cls_bayes_radio_Callback(hObject, eventdata, handles)
+% hObject    handle to cls_bayes_radio (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of cls_bayes_radio
+
+
+% --- Executes on button press in linear_fld_radio.
+function linear_fld_radio_Callback(hObject, eventdata, handles)
+% hObject    handle to linear_fld_radio (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of linear_fld_radio
+
+
+% --- Executes on button press in quad_fld_radio.
+function quad_fld_radio_Callback(hObject, eventdata, handles)
+% hObject    handle to quad_fld_radio (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of quad_fld_radio
+
+
+% --- Executes during object creation, after setting all properties.
+function mean_radio_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to mean_radio (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+
+% --- Executes during object creation, after setting all properties.
+function mode_radio_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to mode_radio (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+
+% --- Executes during object creation, after setting all properties.
+function events_radio_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to events_radio (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+
+% --- Executes during object creation, after setting all properties.
+function features_radio_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to features_radio (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+
+% --- Executes during object creation, after setting all properties.
+function df_bayes_radio_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to df_bayes_radio (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+
+% --- Executes during object creation, after setting all properties.
+function cls_bayes_radio_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to cls_bayes_radio (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+
+% --- Executes during object creation, after setting all properties.
+function linear_fld_radio_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to linear_fld_radio (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+
+% --- Executes during object creation, after setting all properties.
+function quad_fld_radio_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to quad_fld_radio (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called

@@ -1,4 +1,4 @@
-function [ FSdata , column_names_new , selected_features ] = FS_AUC( data , labels , column_names , threshold )
+function [ FSdata , column_names_new , selected_features, print] = FS_AUC( data , labels , column_names , threshold )
 %ROC_AUC for Feature Selection
 %   data (events x features)
 %   labels (events x 1)
@@ -30,4 +30,5 @@ column_names_new = column_names(selected_features);
 delete(gcp);
 disp('AUC method completed.')
 
+print = sprintf('AUC method completed.\n%d Features selected.',length(selected_features));
 end

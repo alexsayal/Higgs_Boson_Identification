@@ -1,6 +1,7 @@
-function [ best_performance , best_model , best_C , best_gamma ] = CL_libSVM( train , trainlabels , test , testlabels , c , g , folds , limit)
+function [ best_performance2 , best_model , best_C , best_gamma, print ] = CL_libSVM( train , trainlabels , test , testlabels , c , g , folds , limit)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
+disp('------ SVM Classifier ------');
 
 if limit==0
     limit = size(train,1);
@@ -33,6 +34,7 @@ toc
 [~,idx] = max(cv_acc);
 
 %---Contour plot
+figure()
 contourf(C, gamma, reshape(cv_acc,size(C))), colorbar,
 hold on
 plot(C(idx), gamma(idx), 'rx')
@@ -51,9 +53,10 @@ best_model = libsvmtrain(labels, data, ...
 
 %---Predict / Test
 [~, accuracy,~] = libsvmpredict(labelstest(1:limittest),datatest(1:limittest,:), best_model, '-q');
-best_performance = accuracy(1);
+best_performance2 = accuracy(1);
 
-fprintf('Test Accuracy = %f%% \n',best_performance);
+fprintf('Test Accuracy = %f%% \n',best_performance2);
 disp('------------------------------');
 
+print = sprintf('------ SVM Classifier ------ \nCross Validation maximum Accuracy = %f%% \nTest Accuracy = %f%% \n------------------------------',best_performance,best_performance2);
 end

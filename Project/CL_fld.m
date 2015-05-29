@@ -1,4 +1,4 @@
-function [ best_performance , best_model ] = CL_fld(  train , trainlabels , test , testlabels , type , kfold)
+function [ best_performance2 , best_model , print] = CL_fld(  train , trainlabels , test , testlabels , type , kfold)
 %CL_FLD Fisher Linear Discriminant Classifier
 %   train (events x features)
 %   trainlabels (events x 1)
@@ -60,10 +60,11 @@ ftest.num_data = size(ftest.X,2);
 ypred = linclass(ftest.X,best_model);
     
 [~,cm,~,~] = confusion(ypred-ones(1,ftest.num_data),ftest.y'-ones(1,ftest.num_data));
-best_performance = 100*( cm(2,2)/(cm(2,2)+cm(1,2)) + cm(1,1)/(cm(1,1)+cm(2,1)) )/2;
+best_performance2 = 100*( cm(2,2)/(cm(2,2)+cm(1,2)) + cm(1,1)/(cm(1,1)+cm(2,1)) )/2;
 
-fprintf('Test Accuracy = %f%% \n',best_performance);
+fprintf('Test Accuracy = %f%% \n',best_performance2);
 disp('----------------------------');
 
-end
+print = sprintf('------ FLD Classifier ------ \nCross Validation maximum Accuracy = %f%% \nTest Accuracy = %f%% \n------------------------------',best_performance,best_performance2);
 
+end

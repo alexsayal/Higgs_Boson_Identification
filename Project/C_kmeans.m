@@ -1,8 +1,8 @@
-function [ best_performance , best_model ] = C_kmeans( train , trainlabels , kfold )
+function [ best_performance , best_model , print] = C_kmeans( train , trainlabels , kfold )
 %K-MEANS Summary of this function goes here
 %   Detailed explanation goes here
 
-disp('------ k-means Clustering ------');
+disp('------ k-Means Clustering ------');
 
 %=====Cross validation and Training=====
 cv = cvpartition(length(train),'kfold',kfold);
@@ -28,4 +28,5 @@ for i=1:kfold
 end
 fprintf('Cross Validation maximum Accuracy = %f%% \n',best_performance);
 
+print = sprintf('------ k-Means Clustering ------\nCross Validation maximum Accuracy = %f%%\n------------------------------',best_performance);
 end

@@ -1,4 +1,4 @@
-function [ FSdata , column_names_new , selected_features ] = FS_corr( data , labels , column_names , method , threshold)
+function [ FSdata , column_names_new , selected_features, print ] = FS_corr( data , labels , column_names , method , threshold)
 %CORRELATION for Feature Selection
 %   data(events x features)
 %   labels (events x 1)
@@ -53,5 +53,6 @@ switch method
 end
 
 disp('Correlation method completed.');
+print = sprintf('Correlation method completed.\n%d Features selected.',length(selected_features));
 
 end

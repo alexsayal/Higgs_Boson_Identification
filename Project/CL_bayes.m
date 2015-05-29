@@ -1,4 +1,4 @@
-function [ best_performance , best_model ] = CL_bayes( train , trainlabels , test , testlabels , type , kfold )
+function [ best_performance2 , best_model ,print] = CL_bayes( train , trainlabels , test , testlabels , type , kfold )
 %CL_BAYES Bayesian Classifier
 %   train (events x features)
 %   trainlabels (events x 1)
@@ -79,7 +79,7 @@ switch type
         ypred = quadclass(ftest.X,model);
         
         [~,cm,~,~] = confusion(ypred-ones(1,ftest.num_data),ftest.y'-ones(1,ftest.num_data));
-        best_performance = 100*( cm(2,2)/(cm(2,2)+cm(1,2)) + cm(1,1)/(cm(1,1)+cm(2,1)) )/2;
+        best_performance2 = 100*( cm(2,2)/(cm(2,2)+cm(1,2)) + cm(1,1)/(cm(1,1)+cm(2,1)) )/2;
         
     case 'cls'
         model = best_model;
@@ -88,10 +88,11 @@ switch type
         ypred = bayescls(ftest.X,model);
         
         [~,cm,~,~] = confusion(ypred-ones(1,ftest.num_data),ftest.y'-ones(1,ftest.num_data));
-        best_performance = 100*( cm(2,2)/(cm(2,2)+cm(1,2)) + cm(1,1)/(cm(1,1)+cm(2,1)) )/2;
+        best_performance2 = 100*( cm(2,2)/(cm(2,2)+cm(1,2)) + cm(1,1)/(cm(1,1)+cm(2,1)) )/2;
 end
 
-fprintf('Test Accuracy = %f%% \n',best_performance);
+fprintf('Test Accuracy = %f%% \n',best_performance2);
 disp('------------------------------');
 
+print = sprintf('------ Bayes Classifier ------ \nCross Validation maximum Accuracy = %f%% \nTest Accuracy = %f%% \n------------------------------',best_performance,best_performance2);
 end

@@ -1,4 +1,4 @@
-function [ FSdata , column_names_new , selected_features ] = FS_mRMR( data , labels , column_names, threshold )
+function [ FSdata , column_names_new , selected_features, print ] = FS_mRMR( data , labels , column_names, threshold )
 %mRMR for Feature Selection
 %   data(events x features)
 %   labels (events x 1)
@@ -18,4 +18,7 @@ T = table(num2cell(selected_features'),cellstr(column_names_new'),'VariableNames
 disp(T);
 selected_features = selected_features';        
 disp('mRMR completed.')
+
+print = sprintf('mRMR completed..\n%d Features selected.',length(selected_features));
+
 end

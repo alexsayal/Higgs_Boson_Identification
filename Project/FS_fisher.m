@@ -1,4 +1,4 @@
-function [ FSdata , column_names_new , selected_features ] = FS_fisher( data , labels , column_names, threshold )
+function [ FSdata , column_names_new , selected_features,print ] = FS_fisher( data , labels , column_names, threshold )
 %FISHER SCORE for Feature Selection
 %   data (events x features)
 %   labels (events x 1)
@@ -29,5 +29,8 @@ disp(T);
 
 selected_features = sort(selected_features);
 column_names_new = column_names(selected_features);
+
+disp('Fisher Score Method completed.');
+print = sprintf('Fisher Score Method completed.\n%d Features selected.',length(selected_features));
 
 end

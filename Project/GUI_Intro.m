@@ -74,7 +74,7 @@ function varargout = GUI_Intro_OutputFcn(hObject, eventdata, handles)
 
 % Get default command line output from handles structure
 varargout{1} = handles.output;
-x=imread('boson_2.jpeg');
+x=imread('boson.jpeg');
 axes(handles.axes)
 imshow(x);
     
