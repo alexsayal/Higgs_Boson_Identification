@@ -52,7 +52,7 @@ function GUI_Help_OpeningFcn(hObject, eventdata, handles, varargin)
 % handles    structure with handles and user data (see GUIDATA)
 % varargin   command line arguments to GUI_Help (see VARARGIN)
 
-helpdata = importdata('HELP.md','');
+helpdata = importdata('HELP_GUI.md','');
 set(handles.help_text,'String',helpdata); 
 
 % Choose default command line output for GUI_Help

@@ -83,7 +83,7 @@ function start_button_Callback(hObject, eventdata, handles)
 % hObject    handle to start_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-select;
+GUI_Main;
 
 
 % --- Executes on button press in help_button.
