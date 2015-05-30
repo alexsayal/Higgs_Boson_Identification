@@ -1,6 +1,16 @@
 function [ best_performance , best_model , print] = C_kmeans( train , trainlabels , kfold )
-%K-MEANS Summary of this function goes here
-%   Detailed explanation goes here
+%K-MEANS k-Means Clustering
+%Usage:
+%   [best_performance,best_model,print] = C_kmeans(train,trainlabels,kfold)
+%Input:
+%   train (events x features)
+%   trainlabels (events x 1)
+%   kfold (number of folds for cross-validation)
+%Output:
+%   best_performance (higher accuracy value)
+%   best_model (kmeans model that resulted in best_performance)
+%   print (string for interface text feedback)
+
 
 disp('------ k-Means Clustering ------');
 

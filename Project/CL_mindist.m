@@ -1,6 +1,17 @@
 function [ best_performance , m1 , m2 , print ] = CL_mindist(  train , trainlabels , test , testlabels )
-%CL_DMINDIST Summary of this function goes here
-%   Detailed explanation goes here
+%CL_DMINDIST Minimum Distance Classifier
+%Usage:
+%   [best_performance,m1,m2,print] = CL_mindist(train,trainlabels,test,testlabels)
+%Input:
+%   train (events x features)
+%   trainlabels (events x 1)
+%   test (events x features)
+%   testlabels (events x 1)
+%Output:
+%   best_performance (higher test accuracy value)
+%   m1 (prototype of class 1)
+%   m2 (prototype of class 2)
+%   print (string for interface text feedback)
 
 disp('------ Minimum Distance Classifier ------');
 

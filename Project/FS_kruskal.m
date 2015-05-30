@@ -1,11 +1,17 @@
 function [ FSdata , column_names_new , selected_features, print ] = FS_kruskal( data , labels , column_names , threshold )
 %KRUSKAL-WALLIS for Feature Selection
-%   data(events x features)
+%Usage:
+%   [FSdata,column_names_new,selected_features,print] = FS_kruskal(data,labels,column_names,threshold)
+%Input:
+%   data (events x features)
 %   labels (events x 1)
 %   column_names (1 x colnum cell)
 %   threshold (desired number of features)
-%
-%   [ FSdata , column_names_new , selected_features ] = FS_kruskal( data , labels , column_names , thresholdKW )
+%Output:
+%   FSdata (data matrix with selected features)
+%   column_names_new (cell with selected features' names)
+%   selected_features (vector with selected features' index)
+%   print (string for interface text feedback)
 
 disp('|---Kruskal-Wallis Test---|');
 

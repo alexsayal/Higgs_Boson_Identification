@@ -1,6 +1,23 @@
 function [ best_performance2 , best_model , best_C , best_gamma, print ] = CL_libSVM( train , trainlabels , test , testlabels , c , g , folds , limit)
-%UNTITLED Summary of this function goes here
-%   Detailed explanation goes here
+%CL_LIBSVM SVM Classifier with LIBSVM
+%Usage:
+%   [best_performance,best_model,best_C,best_gamma,print] = CL_libSVM(train,trainlabels,test,testlabels,c,g,folds,limit)
+%Input:
+%   train (events x features)
+%   trainlabels (events x 1)
+%   test (events x features)
+%   testlabels (events x 1)
+%   C (wanted log_2(C) values x 1)
+%   g (wanted log_2(Gamma) values x 1)
+%   folds (number of folds for cross-validation)
+%   limit (number of events to process)
+%Output:
+%   best_performance (higher test accuracy value)
+%   best_model (SVM model that resulted in best_performance)
+%   best_C (C value of best_model)
+%   best_gamma (Gamma value of best_model)
+%   print (string for interface text feedback)
+
 disp('------ SVM Classifier ------');
 
 if limit==0

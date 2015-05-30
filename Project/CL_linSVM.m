@@ -1,6 +1,19 @@
 function [ best_performance2 , best_model , best_C, print ] = CL_linSVM( train , trainlabels , test , testlabels , C , folds)
-%CL_SVM Summary of this function goes here
-%   Detailed explanation goes here
+%CL_linSVM SVM Classifier with LIBLINEAR
+%Usage:
+%   [best_performance,best_model,best_C,print] = CL_linSVM(train,trainlabels,test,testlabels,C,folds)
+%Input:
+%   train (events x features)
+%   trainlabels (events x 1)
+%   test (events x features)
+%   testlabels (events x 1)
+%   C (wanted log_2(C) values x 1)
+%   folds (number of folds for cross-validation)
+%Output:
+%   best_performance (higher test accuracy value)
+%   best_model (SVM model that resulted in best_performance)
+%   best_C (C value of best_model)
+%   print (string for interface text feedback)
 
 disp('------ SVM Classifier ------');
 

@@ -1,6 +1,21 @@
 function [ best_performance2 , best_model , best_K , best_dist , print] = CL_kNN(  ttrain , ttrainlabels , ttest , ttestlabels , K , kfold , limit )
-%CL_kNN Summary of this function goes here
-%   Detailed explanation goes here
+%CL_kNN k-NN Classifier
+%Usage:
+%   [best_performance,best_model,best_K,best_dist,print] = CL_kNN(train,trainlabels,test,testlabels,K,kfold,limit)
+%Input:
+%   train (events x features)
+%   trainlabels (events x 1)
+%   test (events x features)
+%   testlabels (events x 1)
+%   K (wanted numbers of neighbours x 1)
+%   kfold (number of folds for cross-validation)
+%   limit (number of events to process)
+%Output:
+%   best_performance (higher test accuracy value)
+%   best_model (k-NN model that resulted in best_performance)
+%   best_K (number of neighbours of best_model)
+%   best_dist (distance metric of best_model)
+%   print (string for interface text feedback)
 
 disp('------ k-NN Classifier ------');
 

@@ -1,6 +1,5 @@
 function [ auxmeanperf ] = CL_kNN_main( cv, k ,dista, j, train, trainlabels, type, kfold)
-%UNTITLED Summary of this function goes here
-%   Detailed explanation goes here
+%CL_kNN_MAIN Core function of k-NN Classifier
 
 auxmeanperf = zeros(kfold,1);
 for i=1:kfold

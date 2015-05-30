@@ -1,5 +1,8 @@
 function [ FRdata , W ] = FeatureReduction( data_structure , method , threshold )
-%FEATURE REDUCTION 
+%FEATURE REDUCTION Function to perform PCA or LDA
+%Usage:
+%   [FRdata,W] = FeatureReduction(data_structure,method,threshold)
+%Input:
 %   data_structure:
 %       data.X = data (features x events)
 %       data.y = labels (1 x events)
@@ -9,8 +12,9 @@ function [ FRdata , W ] = FeatureReduction( data_structure , method , threshold 
 %       threshold (percentage of eigvalues 0-1)
 %   Method 'lda': Linear Discriminant Analysis
 %       threshold (desired number of features) -> (Number of classes-1)
-%
-%   [ FRdata ] = FeatureReduction( data_structure , method , threshold )
+%Output:
+%   FRdata (transformed data matrix)
+%   W (eigenvector matrix)
 
 switch method
 %----PCA----%

@@ -1,9 +1,25 @@
 function [ MVdata , labels_new , MVtest , test_labels_new, column_names_new, print ] = missingvalues( data , labels , test , testlabels , column_names , method )
 %MISSING VALUES Removes missing values from data
-%   Possible methods - 'mean' , 'mode' , 'meanclass' , 'removeevents' ,
-%   'removefeatures'
-%
-%   [ MVdata , labels_new , rownum_new , colnum_new ] = missingvalues( data , labels , method )
+%Usage:
+%   [MVdata,labels_new,MVtest,test_labels_new,column_names_new,print] = missingvalues(data,labels,test,testlabels,column_names,method)
+%Input:
+%   data (events x features)
+%   labels (events x 1)
+%   test (events x features)
+%   testlabels (events x 1)
+%   column_names (1 x colnum cell)
+%   method:
+%       'mean' - replace for column mean
+%       'mode' - replace for column mode
+%       'removeevents' - remove events with at least one MV
+%       'removefeatures' - remove features with at least one MV
+%Output:
+%   MVdata (train data without MV)
+%   labels_new (events x 1)
+%   MVtest (validation data without MV)
+%   test_labels_new (events x 1)
+%   column_names_new (1 x colnum cell)
+%   print (string for interface text feedback)
 
 MVdata = data;
 MVtest = test;

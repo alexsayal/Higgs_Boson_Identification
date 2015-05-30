@@ -1,11 +1,17 @@
 function [ FSdata , column_names_new , selected_features, print] = FS_AUC( data , labels , column_names , threshold )
 %ROC_AUC for Feature Selection
+%Usage:
+%   [FSdata,column_names_new,selected_features,print] = FS_AUC(data,labels,column_names,threshold)
+%Input:
 %   data (events x features)
 %   labels (events x 1)
 %   column_names (1 x colnum cell)
 %   threshold (value between 0-1)
-%
-%   [ FSdata , column_names_new ] = FS_AUC( data , labels , column_names , threshold )
+%Output:
+%   FSdata (data matrix with selected features)
+%   column_names_new (cell with selected features' names)
+%   selected_features (vector with selected features' index)
+%   print (string for interface text feedback)
 
 [~,colnum] = size(data);
 

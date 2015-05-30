@@ -1,13 +1,19 @@
 function [ best_performance2 , best_model , print] = CL_fld(  train , trainlabels , test , testlabels , type , kfold)
 %CL_FLD Fisher Linear Discriminant Classifier
+%Usage:
+%   [best_performance,best_model,print] = CL_fld(train,trainlabels,test,testlabels,type,kfold)
+%Input:
 %   train (events x features)
 %   trainlabels (events x 1)
 %   test (events x features)
 %   testlabels (events x 1)
 %   type ('linear' or 'quad')
 %   kfold (number of folds for cross-validation)
-%
-%[best_performance,best_model] = CL_fld(train,trainlabels,test,testlabels,type,kfold)
+%Output:
+%   best_performance (higher test accuracy value)
+%   best_model (fld model that resulted in best_performance)
+%   print (string for interface text feedback)
+
 
 
 disp('------ FLD Classifier ------');

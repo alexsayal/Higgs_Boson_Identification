@@ -1,13 +1,20 @@
 function [ FSdata , column_names_new , selected_features, print ] = FS_corr( data , labels , column_names , method , threshold)
 %CORRELATION for Feature Selection
+%Usage:
+%   [FSdata,column_names_new,selected_features,print] = FS_corr(data,labels,column_names,method,threshold)
+%Input:
 %   data(events x features)
 %   labels (events x 1)
 %   column_names (1 x colnum cell)
-
 %   Method 'feat': Between features
 %       threshold (value between 0-1)
 %   Method 'featlabel': Between features and labels
 %       threshold (value between 0-1)
+%Output:
+%   FSdata (data matrix with selected features)
+%   column_names_new (cell with selected features' names)
+%   selected_features (vector with selected features' index)
+%   print (string for interface text feedback)
 
 FSdata = data;
 [~,colnum] = size(data);
