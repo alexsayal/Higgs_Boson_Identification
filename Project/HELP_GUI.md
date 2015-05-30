@@ -63,7 +63,7 @@ From this step, it is possible to perform Feature Selection, Feature Reduction, 
 
         FISHER SCORE
             A box shows for input of the desired number of features to retain.
-            The function calculates de fisher score for all features and returns the set with the desired number of features that return a higher score.
+            The function calculates the fisher score for all features and returns the set with the desired number of features that return a higher score.
             Press RUN to perform this selection.
 
     All the methods are applied to the training set. The features of the testing set are also selected, based on the training results.
@@ -83,22 +83,27 @@ From this step, it is possible to perform Feature Selection, Feature Reduction, 
     Seven classification methods are available:
         BAYESIAN Classifier
             Select Default or With Reject Option.
+            After RUN button is pressed, Bayesian Cassifier algorithm runs and returns both the performances obtained with the train group and test group.
 
         FLD Classifier
             Select Linear or Quadratic.
+            After RUN button is pressed, FLD Cassifier algorithm runs and returns both the performances obtained with the train group and test group.
 
         LINEAR SVM
             LIBLINEAR 
             Define min,step and max values for parameter C.
+            After RUN button is pressed, LibLinear algorithm runs and returns both the performances obtained with the train group and test group.
 
         LIBSVM RBF
             LIBSVM
             Define min,step and max values for parameter C and Gamma.
-            Define event limit. Default is 1000 events, for the complete training set (150000 events) the algorithm takes several hours to complete.
+            Define event limit because for the complete training set (150000 events) the algorithm takes several hours to complete. Default is 1000 events.
+            After RUN button is pressed, LibSVM algorithm runs and returns both the performances obtained with the train group and test group.
 
         k-NN Classifier
             Define min and max values for parameter K (number of neighbours)
-            Define event limit. Default is 1000 events, for the complete training set (150000 events) the algorithm takes several hours to complete.
+            Define event limit because for the complete training set (150000 events) the algorithm takes several hours to complete. Default is 1000 events.
+            After RUN button is pressed, k-NN Classifier algorithm runs and returns both the performances obtained with the train group and test group.
 
         MINIMUM DISTANCE Classifier
             Press RUN.
