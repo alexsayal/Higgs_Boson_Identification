@@ -48,7 +48,7 @@ end
 toc
 
 %---Pair (C,gamma) with best accuracy
-[~,idx] = max(cv_acc);
+[best_performance,idx] = max(cv_acc);
 
 %---Contour plot
 figure()

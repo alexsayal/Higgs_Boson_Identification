@@ -24,6 +24,8 @@ type = {'cityblock','euclidean','hamming','jaccard'};
 if limit==0
     limit = size(ttrain,1);
     limittest = size(ttest,1);
+else
+    limittest = limit;
 end
 
 train = ttrain(1:limit,:);
@@ -87,7 +89,7 @@ fprintf('Test Accuracy = %f%% \n',best_performance2);
 disp('----------------------------');
 
 
-print = sprintf('------ k-NN Classifier ------ \nCross Validation maximum Accuracy = %f%% \n------------------------------',best_performance);
+print = sprintf('------ k-NN Classifier ------ \nCross Validation maximum Accuracy = %f%% \nBest K = %d \nBest distance metric is %s \nTest Accuracy = %f%% \n------------------------------',best_performance,best_K,best_dist,best_performance2);
 
 end
 

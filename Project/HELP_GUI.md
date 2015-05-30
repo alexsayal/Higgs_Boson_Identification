@@ -79,6 +79,8 @@ From this step, it is possible to perform Feature Selection, Feature Reduction, 
             A box shows for input of the desired number of features to retain.
             Press RUN to perform this reduction.
 
+    If you want to run Feature Reduction with another method, please repeat the Feature Selection procedure by clicking RUN on the FS panel.
+
 10) CLASSIFICATION Panel
     Seven classification methods are available:
         BAYESIAN Classifier

@@ -22,7 +22,7 @@ function varargout = GUI_Main(varargin)
 
 % Edit the above text to modify the response to help GUI_Main
 
-% Last Modified by GUIDE v2.5 29-May-2015 20:38:55
+% Last Modified by GUIDE v2.5 30-May-2015 15:27:29
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -198,7 +198,13 @@ set(handles.kmin_input,'String','');
 set(handles.kmax_input,'String','');
 set(handles.limit_input,'String','1000');
 set(handles.nfold_input,'String','10');
-clear all;
+set(handles.bayes_panel,'ShadowColor',[0.7 0.7 0.7]);
+set(handles.fld_panel,'ShadowColor',[0.7 0.7 0.7]);
+set(handles.c_panel,'ShadowColor',[0.7 0.7 0.7]);
+set(handles.g_panel,'ShadowColor',[0.7 0.7 0.7]);
+set(handles.k_panel,'ShadowColor',[0.7 0.7 0.7]);
+set(handles.limit_text,'ForegroundColor',[1 1 1]);
+clear;
 
 
 % --- Executes on button press in quit_button.
@@ -222,20 +228,35 @@ selected = class{handles.class_option};
 switch selected
     case 'bayes'
         %%---Bayes Classifier
-        nfold = str2double(get(handles.nfold_input,'String')); 
+        nfold = get(handles.nfold_input,'String'); 
         type = handles.bayes_option;
-        [ handles.CL_bayes_performance , handles.CL_bayes_model , print] = ...
-            CL_bayes( handles.XTrain_touse , handles.YTrain_touse , handles.XTest_touse , handles.YTest_touse , type , nfold);
-        set(handles.text_right,'String',print);
         
+        if isempty(str2num(nfold))
+            warndlg('Nfold must be numerical');
+        elseif mod(str2num(nfold),1)~=0
+            warndlg('Nfold must be integer');
+        elseif str2num(nfold)<2
+            warndlg('Nfold must be at least 2');
+        else
+            [ handles.CL_bayes_performance , handles.CL_bayes_model , print] = ...
+                CL_bayes( handles.XTrain_touse , handles.YTrain_touse , handles.XTest_touse , handles.YTest_touse , type , str2num(nfold));
+            set(handles.text_right,'String',print);
+        end
     case 'fld'
         %%---FLD Classifier
-        nfold = str2double(get(handles.nfold_input,'String'));
+        nfold = get(handles.nfold_input,'String');
         type = handles.fld_option;
-        [ handles.CL_fld_performance , handles.CL_fld_model , print] = ...
-            CL_fld( handles.XTrain_touse , handles.YTrain_touse , handles.XTest_touse , handles.YTest_touse , type , nfold);
-        set(handles.text_right,'String',print);
-
+        if isempty(str2num(nfold))
+            warndlg('Nfold must be numerical');
+        elseif mod(str2num(nfold),1)~=0
+            warndlg('Nfold must be integer');
+        elseif str2num(nfold)<2
+            warndlg('Nfold must be at least 2');
+        else
+            [ handles.CL_fld_performance , handles.CL_fld_model , print] = ...
+                CL_fld( handles.XTrain_touse , handles.YTrain_touse , handles.XTest_touse , handles.YTest_touse , type , str2num(nfold));
+            set(handles.text_right,'String',print);
+        end
     case 'linsvm'
         %%---SVM with LibLINEAR
         nfold = str2num(get(handles.nfold_input,'String'));
@@ -243,10 +264,23 @@ switch selected
         Cmax = str2num(get(handles.cmax_input,'String'));
         Cstep = str2num(get(handles.cstep_input,'String'));
         C = Cmin:Cstep:Cmax;
-        [ handles.CL_linsvm_performance , handles.CL_linsvm_model , print] = ...
-            CL_linSVM( handles.XTrain_touse , handles.YTrain_touse , handles.XTest_touse , handles.YTest_touse, C , nfold);
-        set(handles.text_right,'String',print);
-     
+        if isempty(nfold)
+            warndlg('Nfold must be numerical');
+        elseif mod(nfold,1)~=0
+            warndlg('Nfold must be integer');
+        elseif nfold<2
+            warndlg('Nfold must be at least 2');
+        elseif isempty(Cmin) || isempty(Cstep) || isempty(Cmax)
+            warndlg('C values must be numerical');
+        elseif Cmax<Cmin
+            warndlg('Cmax must be higher than Cmin');
+        elseif Cstep>Cmax-Cmin
+            warndlg('Cstep must be reasonable');
+        else
+            [ handles.CL_linsvm_performance , handles.CL_linsvm_model , ~ , print] = ...
+                CL_linSVM( handles.XTrain_touse , handles.YTrain_touse , handles.XTest_touse , handles.YTest_touse, C , nfold);
+            set(handles.text_right,'String',print);
+        end
     case 'libsvm'
         %%---SVM with LibSVM
         nfold = str2num(get(handles.nfold_input,'String'));
@@ -259,10 +293,31 @@ switch selected
         gstep = str2num(get(handles.gstep_input,'String'));
         gamma = gmin:gstep:gmax;
         limit = str2num(get(handles.limit_input, 'String')); % Limit the number of events
-        [ handles.CL_libsvm_performance , handles.CL_libsvm_model , print] = ...
-            CL_libSVM( handles.XTrain_touse , handles.YTrain_touse , handles.XTest_touse , handles.YTest_touse, C , gamma , nfold, limit);
-        set(handles.text_right,'String',print);
-        
+        if isempty(nfold)
+            warndlg('Nfold must be numerical');
+        elseif mod(nfold,1)~=0
+            warndlg('Nfold must be integer');
+        elseif nfold<2
+            warndlg('Nfold must be at least 2');
+        elseif isempty(Cmin) || isempty(Cstep) || isempty(Cmax)
+            warndlg('C values must be numerical');
+        elseif Cmax<Cmin
+            warndlg('Cmax must be higher than Cmin');
+        elseif Cstep>Cmax-Cmin
+            warndlg('Cstep must be reasonable');
+        elseif isempty(gmin) || isempty(gstep) || isempty(gmax)
+            warndlg('Gamma values must be numerical');
+        elseif gmax<gmin
+            warndlg('gmax must be higher than gmin');
+        elseif gstep>gmax-gmin
+            warndlg('gstep must be reasonable');
+        elseif limit>150000
+            warndlg('Limit must be lower than 150000');
+        else
+            [ handles.CL_libsvm_performance , handles.CL_libsvm_model , ~ , ~ , print] = ...
+                CL_libSVM( handles.XTrain_touse , handles.YTrain_touse , handles.XTest_touse , handles.YTest_touse, C , gamma , nfold, limit);
+            set(handles.text_right,'String',print);
+        end
     case 'kNN'
         %%---kNN
         nfold = str2num(get(handles.nfold_input,'String'));
@@ -270,17 +325,41 @@ switch selected
         Kmax = str2num(get(handles.kmax_input,'String'));
         K = Kmin:Kmax;
         limit = str2num(get(handles.limit_input, 'String')); % Limit the number of events
-        [ handles.CL_kNN_performance , handles.CL_kNN_model , print ] = ...
-            CL_kNN(handles.XTrain_touse , handles.YTrain_touse , handles.XTest_touse , handles.YTest_touse , K , nfold, limit);
-        set(handles.text_right,'String',print);
-        
+        if isempty(nfold)
+            warndlg('Nfold must be numerical');
+        elseif mod(nfold,1)~=0
+            warndlg('Nfold must be integer');
+        elseif nfold<2
+            warndlg('Nfold must be at least 2');
+        elseif isempty(Kmin) || isempty(Kmax)
+            warndlg('K values must be numerical');
+        elseif Kmin<1
+            warndlg('Kmin must be at least 1');
+        elseif Kmax<Kmin
+            warndlg('Kmax must be higher than Kmin');
+        elseif isempty(limit)
+            warndlg('Limit must be numerical');
+        elseif limit>150000
+            warndlg('Limit must be lower than 150000');
+        else
+            [ handles.CL_kNN_performance , handles.CL_kNN_model , ~ , ~ , print ] = ...
+                CL_kNN(handles.XTrain_touse , handles.YTrain_touse , handles.XTest_touse , handles.YTest_touse , K , nfold, limit);
+            set(handles.text_right,'String',print);
+        end
     case 'kmeans'
         %%---K-means
         nfold = str2num(get(handles.nfold_input,'String'));
-        [ handles.C_kmean_performance , handles.C_kmeans_model , print] = ...
-            C_kmeans( handles.XTrain_touse , handles.YTrain_touse , nfold );
-       set(handles.text_right,'String',print);
-       
+        if isempty(nfold)
+            warndlg('Nfold must be numerical');
+        elseif mod(nfold,1)~=0
+            warndlg('Nfold must be integer');
+        elseif nfold<2
+            warndlg('Nfold must be at least 2');
+        else
+            [ handles.C_kmean_performance , handles.C_kmeans_model , print] = ...
+                C_kmeans( handles.XTrain_touse , handles.YTrain_touse , handles.XTest_touse , handles.YTest_touse, nfold );
+            set(handles.text_right,'String',print);
+        end
     case 'mindist'
         %%---Minimum Distance
         [ handles.CL_mindist_performance , handles.CL_mindist_m1 , handles.CL_mindist_m2 , print] = ...
@@ -320,6 +399,12 @@ function bayes_button_Callback(hObject, eventdata, handles)
 
 handles.class_option = 1;
 set(handles.text_right,'String',sprintf('Bayesian Classifier Selected.\nPlease Choose Type (default or reject option).'));
+set(handles.bayes_panel,'ShadowColor',[0 0 1]);
+set(handles.fld_panel,'ShadowColor',[0.7 0.7 0.7]);
+set(handles.c_panel,'ShadowColor',[0.7 0.7 0.7]);
+set(handles.g_panel,'ShadowColor',[0.7 0.7 0.7]);
+set(handles.k_panel,'ShadowColor',[0.7 0.7 0.7]);
+set(handles.limit_text,'ForegroundColor',[1 1 1]);
 guidata(hObject,handles);
 
 % --- Executes on button press in fld_button.
@@ -330,6 +415,12 @@ function fld_button_Callback(hObject, eventdata, handles)
 
 handles.class_option = 2;
 set(handles.text_right,'String',sprintf('Fisher Linear Discriminant Classifier Selected.\nPlease Choose Type (linear or quadratic).'));
+set(handles.fld_panel,'ShadowColor',[0 0 1]);
+set(handles.bayes_panel,'ShadowColor',[0.7 0.7 0.7]);
+set(handles.c_panel,'ShadowColor',[0.7 0.7 0.7]);
+set(handles.g_panel,'ShadowColor',[0.7 0.7 0.7]);
+set(handles.k_panel,'ShadowColor',[0.7 0.7 0.7]);
+set(handles.limit_text,'ForegroundColor',[1 1 1]);
 guidata(hObject,handles);
 
 % --- Executes on button press in svm_button.
@@ -340,6 +431,12 @@ function svm_button_Callback(hObject, eventdata, handles)
 
 handles.class_option = 3;
 set(handles.text_right,'String',sprintf('LibLinear SVM Classifier Selected.\nPlease Set C Values.'));
+set(handles.c_panel,'ShadowColor',[0 0 1]);
+set(handles.bayes_panel,'ShadowColor',[0.7 0.7 0.7]);
+set(handles.fld_panel,'ShadowColor',[0.7 0.7 0.7]);
+set(handles.g_panel,'ShadowColor',[0.7 0.7 0.7]);
+set(handles.k_panel,'ShadowColor',[0.7 0.7 0.7]);
+set(handles.limit_text,'ForegroundColor',[1 1 1]);
 guidata(hObject,handles);
 
 % --- Executes on button press in libsvm_button.
@@ -350,6 +447,12 @@ function libsvm_button_Callback(hObject, eventdata, handles)
 
 handles.class_option = 4;
 set(handles.text_right,'String',sprintf('LibSVM Classifier Selected.\nPlease Set C and Gamma Values\nMind the event number limit (default is 1000).'));
+set(handles.c_panel,'ShadowColor',[0 0 1]);
+set(handles.g_panel,'ShadowColor',[0 0 1]);
+set(handles.limit_text,'ForegroundColor',[0 0 1]);
+set(handles.bayes_panel,'ShadowColor',[0.7 0.7 0.7]);
+set(handles.fld_panel,'ShadowColor',[0.7 0.7 0.7]);
+set(handles.k_panel,'ShadowColor',[0.7 0.7 0.7]);
 guidata(hObject,handles);
 
 % --- Executes on button press in knn_button.
@@ -360,6 +463,12 @@ function knn_button_Callback(hObject, eventdata, handles)
 
 handles.class_option = 5;
 set(handles.text_right,'String',sprintf('k-NN Classifier Selected.\nPlease Set K Values\nMind the event number limit (default is 1000).'));
+set(handles.k_panel,'ShadowColor',[0 0 1]);
+set(handles.limit_text,'ForegroundColor',[0 0 1]);
+set(handles.bayes_panel,'ShadowColor',[0.7 0.7 0.7]);
+set(handles.fld_panel,'ShadowColor',[0.7 0.7 0.7]);
+set(handles.c_panel,'ShadowColor',[0.7 0.7 0.7]);
+set(handles.g_panel,'ShadowColor',[0.7 0.7 0.7]);
 guidata(hObject,handles);
 
 % --- Executes on button press in min_dist_button.
@@ -370,6 +479,12 @@ function min_dist_button_Callback(hObject, eventdata, handles)
 
 handles.class_option = 6;
 set(handles.text_right,'String',sprintf('Minimum Distance Classifier Selected.\nEuclidian distance.'));
+set(handles.bayes_panel,'ShadowColor',[0.7 0.7 0.7]);
+set(handles.fld_panel,'ShadowColor',[0.7 0.7 0.7]);
+set(handles.c_panel,'ShadowColor',[0.7 0.7 0.7]);
+set(handles.g_panel,'ShadowColor',[0.7 0.7 0.7]);
+set(handles.k_panel,'ShadowColor',[0.7 0.7 0.7]);
+set(handles.limit_text,'ForegroundColor',[1 1 1]);
 guidata(hObject,handles);
 
 % --- Executes on button press in k_means_button.
@@ -380,6 +495,12 @@ function k_means_button_Callback(hObject, eventdata, handles)
 
 handles.class_option = 7;
 set(handles.text_right,'String',sprintf('k-Means Classifier Selected.'));
+set(handles.bayes_panel,'ShadowColor',[0.7 0.7 0.7]);
+set(handles.fld_panel,'ShadowColor',[0.7 0.7 0.7]);
+set(handles.c_panel,'ShadowColor',[0.7 0.7 0.7]);
+set(handles.g_panel,'ShadowColor',[0.7 0.7 0.7]);
+set(handles.k_panel,'ShadowColor',[0.7 0.7 0.7]);
+set(handles.limit_text,'ForegroundColor',[1 1 1]);
 guidata(hObject,handles);
 
 % --- Executes on button press in fr_button.
@@ -426,7 +547,7 @@ switch option
         end
 end
 
-handles.XTest_touse = handles.XTest_touse';
+handles.XTrain_touse = handles.XTrain_touse';
 handles.fr_run = 'true';
 
 guidata(hObject,handles);
@@ -995,3 +1116,12 @@ function quad_fld_radio_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to quad_fld_radio (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
+
+
+function kmax_input_Callback(hObject, eventdata, handles)
+% hObject    handle to kmax_input (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of kmax_input as text
+%        str2double(get(hObject,'String')) returns contents of kmax_input as a double

@@ -1,4 +1,4 @@
-function [ best_performance , best_model , print] = C_kmeans( train , trainlabels , kfold )
+function [ best_performance , best_model , print] = C_kmeans( train , trainlabels , test , testlabels, kfold )
 %K-MEANS k-Means Clustering
 %Usage:
 %   [best_performance,best_model,print] = C_kmeans(train,trainlabels,kfold)
@@ -37,6 +37,8 @@ for i=1:kfold
     end
 end
 fprintf('Cross Validation maximum Accuracy = %f%% \n',best_performance);
+
+disp('------------------------------');
 
 print = sprintf('------ k-Means Clustering ------\nCross Validation maximum Accuracy = %f%%\n------------------------------',best_performance);
 end
