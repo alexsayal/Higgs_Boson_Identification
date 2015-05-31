@@ -20,7 +20,7 @@ disp('------ SVM Classifier ------');
 labels = trainlabels;
 data = sparse(train);
 
-%---Cross validation and training
+%=====Cross validation and training=====
 cv_acc = zeros(length(C),1);
 for i=1:length(C)
     fprintf('C %d/%d: ',i,length(C));
@@ -44,11 +44,11 @@ figure();
 fprintf('Cross Validation maximum Accuracy = %f%% \n',best_performance);
 fprintf('Best C = %f \n',best_C);
 
-%---Train with best parameters
+%=====Test=====
 best_model = liblineartrain(labels, data, ...
                     sprintf('-c %f -s %d -B %d -q', best_C , 2 , 1));
 
-%---Predict / Test
+
 [~,best_performance2,~] = liblinearpredict(testlabels, sparse(test), best_model, '-q');
 
 fprintf('Test Accuracy = %f%% \n',best_performance2(1));

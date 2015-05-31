@@ -22,7 +22,7 @@ function varargout = GUI_Main(varargin)
 
 % Edit the above text to modify the response to help GUI_Main
 
-% Last Modified by GUIDE v2.5 30-May-2015 15:27:29
+% Last Modified by GUIDE v2.5 31-May-2015 10:51:07
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -222,7 +222,7 @@ function class_button_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 set(handles.text_right,'String',' ');
-class = {'bayes','fld','linsvm','libsvm','kNN','mindist','kmeans'};
+class = {'bayes','fld','linsvm','libsvm','kNN','mindist'};
 selected = class{handles.class_option};
 
 switch selected
@@ -346,20 +346,6 @@ switch selected
                 CL_kNN(handles.XTrain_touse , handles.YTrain_touse , handles.XTest_touse , handles.YTest_touse , K , nfold, limit);
             set(handles.text_right,'String',print);
         end
-    case 'kmeans'
-        %%---K-means
-        nfold = str2num(get(handles.nfold_input,'String'));
-        if isempty(nfold)
-            warndlg('Nfold must be numerical');
-        elseif mod(nfold,1)~=0
-            warndlg('Nfold must be integer');
-        elseif nfold<2
-            warndlg('Nfold must be at least 2');
-        else
-            [ handles.C_kmean_performance , handles.C_kmeans_model , print] = ...
-                C_kmeans( handles.XTrain_touse , handles.YTrain_touse , handles.XTest_touse , handles.YTest_touse, nfold );
-            set(handles.text_right,'String',print);
-        end
     case 'mindist'
         %%---Minimum Distance
         [ handles.CL_mindist_performance , handles.CL_mindist_m1 , handles.CL_mindist_m2 , print] = ...
@@ -479,22 +465,6 @@ function min_dist_button_Callback(hObject, eventdata, handles)
 
 handles.class_option = 6;
 set(handles.text_right,'String',sprintf('Minimum Distance Classifier Selected.\nEuclidian distance.'));
-set(handles.bayes_panel,'ShadowColor',[0.7 0.7 0.7]);
-set(handles.fld_panel,'ShadowColor',[0.7 0.7 0.7]);
-set(handles.c_panel,'ShadowColor',[0.7 0.7 0.7]);
-set(handles.g_panel,'ShadowColor',[0.7 0.7 0.7]);
-set(handles.k_panel,'ShadowColor',[0.7 0.7 0.7]);
-set(handles.limit_text,'ForegroundColor',[1 1 1]);
-guidata(hObject,handles);
-
-% --- Executes on button press in k_means_button.
-function k_means_button_Callback(hObject, eventdata, handles)
-% hObject    handle to k_means_button (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-handles.class_option = 7;
-set(handles.text_right,'String',sprintf('k-Means Classifier Selected.'));
 set(handles.bayes_panel,'ShadowColor',[0.7 0.7 0.7]);
 set(handles.fld_panel,'ShadowColor',[0.7 0.7 0.7]);
 set(handles.c_panel,'ShadowColor',[0.7 0.7 0.7]);
@@ -1120,3 +1090,83 @@ function kmax_input_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'String') returns contents of kmax_input as text
 %        str2double(get(hObject,'String')) returns contents of kmax_input as a double
+
+
+
+function cmin_input_Callback(hObject, eventdata, handles)
+% hObject    handle to cmin_input (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of cmin_input as text
+%        str2double(get(hObject,'String')) returns contents of cmin_input as a double
+
+
+
+function cmax_input_Callback(hObject, eventdata, handles)
+% hObject    handle to cmax_input (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of cmax_input as text
+%        str2double(get(hObject,'String')) returns contents of cmax_input as a double
+
+
+
+function cstep_input_Callback(hObject, eventdata, handles)
+% hObject    handle to cstep_input (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of cstep_input as text
+%        str2double(get(hObject,'String')) returns contents of cstep_input as a double
+
+
+
+function gmin_input_Callback(hObject, eventdata, handles)
+% hObject    handle to gmin_input (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of gmin_input as text
+%        str2double(get(hObject,'String')) returns contents of gmin_input as a double
+
+
+
+function gmax_input_Callback(hObject, eventdata, handles)
+% hObject    handle to gmax_input (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of gmax_input as text
+%        str2double(get(hObject,'String')) returns contents of gmax_input as a double
+
+
+
+function gstep_input_Callback(hObject, eventdata, handles)
+% hObject    handle to gstep_input (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of gstep_input as text
+%        str2double(get(hObject,'String')) returns contents of gstep_input as a double
+
+
+
+function kmin_input_Callback(hObject, eventdata, handles)
+% hObject    handle to kmin_input (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of kmin_input as text
+%        str2double(get(hObject,'String')) returns contents of kmin_input as a double
+
+
+
+function limit_input_Callback(hObject, eventdata, handles)
+% hObject    handle to limit_input (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of limit_input as text
+%        str2double(get(hObject,'String')) returns contents of limit_input as a double

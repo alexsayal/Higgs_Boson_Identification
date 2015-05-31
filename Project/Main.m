@@ -168,8 +168,8 @@ clear option FRdataTemp threshold;
 Ctrain = FRdata;
 Ctest = FRtestdata;
 
-class = {'bayes','fld','linsvm','libsvm','kNN','kmeans','mindist'};
-selected = class{7};
+class = {'bayes','fld','linsvm','libsvm','kNN','mindist'};
+selected = class{1};
 
 switch selected
     case 'bayes'
@@ -209,12 +209,6 @@ switch selected
         limit = 1000; % Limit the number of events. Set zero for no limit
         [ CL_kNN_performance , CL_kNN_model ] = ...
             CL_kNN( Ctrain , MVYtrain , Ctest, MVYtest , K , nfold, limit);
-        
-    case 'kmeans'
-        %%---K-means
-        nfold = 10;
-        [ C_kmean_performance , C_kmeans_model ] = ...
-            C_kmeans( Ctrain , MVYtrain , nfold );
        
     case 'mindist'
         %%---Minimum Distance
