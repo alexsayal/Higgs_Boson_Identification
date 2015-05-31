@@ -49,6 +49,7 @@ toc
 
 %---Pair (C,gamma) with best accuracy
 [best_performance,idx] = max(cv_acc);
+fprintf('Cross Validation maximum Accuracy = %f%% \n',best_performance);
 
 %---Contour plot
 figure()
@@ -64,6 +65,9 @@ xlabel('log_2(C)'), ylabel('log_2(\gamma)'), title('Cross-Validation Accuracy')
 best_C = 2^C(idx);
 best_gamma = 2^gamma(idx);
 
+fprintf('Best C = %f \n',best_C);
+fprintf('Best Gamma = %f \n',best_gamma);
+
 %---Train with best parameters
 best_model = libsvmtrain(labels, data, ...
                     sprintf('-c %f -g %f -q', best_C, best_gamma));
@@ -75,5 +79,5 @@ best_performance2 = accuracy(1);
 fprintf('Test Accuracy = %f%% \n',best_performance2);
 disp('------------------------------');
 
-print = sprintf('------ SVM Classifier ------ \nCross Validation maximum Accuracy = %f%% \nTest Accuracy = %f%% \n------------------------------',best_performance,best_performance2);
+print = sprintf('------ SVM Classifier ------ \nCross Validation maximum Accuracy = %f%% \nBest C = %f \nBest Gamma = %f \nTest Accuracy = %f%% \n------------------------------',best_performance,best_C,best_gamma,best_performance2);
 end

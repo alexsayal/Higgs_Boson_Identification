@@ -54,5 +54,5 @@ best_model = liblineartrain(labels, data, ...
 fprintf('Test Accuracy = %f%% \n',best_performance2(1));
 disp('------------------------------');
 
-print = sprintf('------ SVM Classifier ------ \nCross Validation maximum Accuracy = %f%% \nTest Accuracy = %f%% \n------------------------------',best_performance,best_performance2(1));
+print = sprintf('------ SVM Classifier ------ \nCross Validation maximum Accuracy = %f%% \nBest C = %f \nTest Accuracy = %f%% \n------------------------------',best_performance,best_C,best_performance2(1));
 end

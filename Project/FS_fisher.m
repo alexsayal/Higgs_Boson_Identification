@@ -1,4 +1,4 @@
-function [ FSdata , column_names_new , selected_features,print ] = FS_fisher( data , labels , column_names, threshold )
+function [ FSdata , column_names_new , selected_features, print] = FS_fisher( data , labels , column_names, threshold )
 %FISHER SCORE for Feature Selection
 %Usage:
 %   [FSdata,column_names_new,selected_features,print] = FS_fisher(data,labels,column_names,threshold)

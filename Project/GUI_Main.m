@@ -543,7 +543,7 @@ switch option
         else
             [ handles.XTrain_touse , W ] = FeatureReduction( FRdataTemp , 'lda' , str2num(threshold));
             handles.XTest_touse = handles.XTest_touse*W;
-            set(handles.text_left, 'String', sprintf('LDA executed.\n%d Components.',threshold));
+            set(handles.text_left, 'String', sprintf('LDA executed.\n%s Components.',threshold));
         end
 end
 
@@ -606,13 +606,11 @@ function fs_button_Callback(hObject, eventdata, handles)
 if strcmp(handles.fr_run,'true')
     handles.XTrain_touse = handles.XTrain_norm;
     handles.XTest_touse = handles.XTest_norm;
-    handles.column_names = handles.column_names_norm;
     handles.fr_run = 'false';
 end
 if strcmp(handles.fs_run,'true')
     handles.XTrain_touse = handles.XTrain_norm;
     handles.XTest_touse = handles.XTest_norm;
-    handles.column_names = handles.column_names_norm;
     handles.fs_run = 'false';
 end
 
@@ -629,7 +627,7 @@ switch handles.fs_option
         elseif str2num(threshold)>handles.dim
             warndlg(strcat('Input must be <= ',{' '},num2str(handles.dim))); 
         else
-            [handles.XTrain_touse , handles.column_names , FSfeatures,print] = FS_kruskal( handles.XTrain_touse , handles.YTrain_touse , handles.column_names , str2num(threshold) );
+            [handles.XTrain_touse , handles.column_names , FSfeatures,print] = FS_kruskal( handles.XTrain_touse , handles.YTrain_touse , handles.column_names_norm , str2num(threshold) );
             handles.XTest_touse = handles.XTest_touse(:,FSfeatures);
             set(handles.text_left,'String',print);
         end
@@ -642,7 +640,7 @@ switch handles.fs_option
         elseif str2num(threshold)<=0 || str2num(threshold)>1
             warndlg('Input must be a value between 0 and 1');
         else
-            [handles.XTrain_touse , handles.column_names , FSfeatures, print] = FS_corr( handles.XTrain_touse , handles.YTrain_touse , handles.column_names , 'feat' ,str2num(threshold));
+            [handles.XTrain_touse , handles.column_names , FSfeatures, print] = FS_corr( handles.XTrain_touse , handles.YTrain_touse , handles.column_names_norm , 'feat' ,str2num(threshold));
             handles.XTest_touse = handles.XTest_touse(:,FSfeatures);
             set(handles.text_left,'String',print);
         end
@@ -654,7 +652,7 @@ switch handles.fs_option
         elseif str2num(threshold)<=0 || str2num(threshold)>1
             warndlg('Input must be a value between 0 and 1');
         else
-            [handles.XTrain_touse , handles.column_names , FSfeatures, print] = FS_corr( handles.XTrain_touse , handles.YTrain_touse , handles.column_names , 'featlabel' , str2num(threshold));
+            [handles.XTrain_touse , handles.column_names , FSfeatures, print] = FS_corr( handles.XTrain_touse , handles.YTrain_touse , handles.column_names_norm , 'featlabel' , str2num(threshold));
             handles.XTest_touse = handles.XTest_touse(:,FSfeatures);
             set(handles.text_left,'String',print);
         end
@@ -670,7 +668,7 @@ switch handles.fs_option
         elseif str2num(threshold)>handles.dim
             warndlg(strcat('Input must be <= ',{' '},num2str(handles.dim))); 
         else
-            [handles.XTrain_touse , handles.column_names , FSfeatures, print] = FS_mRMR( handles.XTrain_touse , handles.YTrain_touse , handles.column_names , str2num(threshold));
+            [handles.XTrain_touse , handles.column_names , FSfeatures, print] = FS_mRMR( handles.XTrain_touse , handles.YTrain_touse , handles.column_names_norm , str2num(threshold));
             handles.XTest_touse = handles.XTest_touse(:,FSfeatures);
             set(handles.text_left,'String',print);
         end
@@ -683,7 +681,7 @@ switch handles.fs_option
         elseif str2num(threshold)<=0 || str2num(threshold)>1
             warndlg('Input must be a value between 0 and 1');
         else
-            [handles.XTrain_touse , handles.column_names , FSfeatures,print] = FS_AUC( handles.XTrain_touse , handles.YTrain_touse , handles.column_names , str2num(threshold));
+            [handles.XTrain_touse , handles.column_names , FSfeatures,print] = FS_AUC( handles.XTrain_touse , handles.YTrain_touse , handles.column_names_norm , str2num(threshold));
             handles.XTest_touse = handles.XTest_touse(:,FSfeatures);
             set(handles.text_left,'String',print);
         end
@@ -699,7 +697,7 @@ switch handles.fs_option
         elseif str2num(threshold)>handles.dim
             warndlg(strcat('Input must be <= ',{' '},num2str(handles.dim))); 
         else
-            [handles.XTrain_touse , handles.column_names , FSfeatures,print] = FS_fisher(handles.XTrain_touse , handles.YTrain_touse , handles.column_names, str2num(threshold)); 
+            [handles.XTrain_touse , handles.column_names , FSfeatures,print] = FS_fisher(handles.XTrain_touse , handles.YTrain_touse , handles.column_names_norm, str2num(threshold)); 
             handles.XTest_touse = handles.XTest_touse(:,FSfeatures); 
             set(handles.text_left,'String',print);
         end
@@ -806,18 +804,15 @@ function norm_button_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 [handles.XTrain_touse , m , sigma , print] = scalestd(handles.MVXtrain);
-handles.XTest_touse = scalestd(handles.MVXtest,m,sigma);
+[handles.XTest_touse,~,~,print2] = scalestd(handles.MVXtest,m,sigma);
 
 handles.XTrain_norm = handles.XTrain_touse;
 handles.XTest_norm = handles.XTest_touse;
-handles.column_names_norm = handles.column_names;
-
-handles.column_names = handles.column_names_norm;
 
 handles.fs_run = 'false';
 handles.fr_run = 'false';
 
-set(handles.text_left, 'String', print);
+set(handles.text_left, 'String', strcat(print,sprintf('\n%s',print2)));
 guidata(hObject,handles);
 
 % --- Executes during object creation, after setting all properties.

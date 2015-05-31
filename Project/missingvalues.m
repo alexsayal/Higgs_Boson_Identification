@@ -1,4 +1,4 @@
-function [ MVdata , labels_new , MVtest , test_labels_new, column_names_new, print ] = missingvalues( data , labels , test , testlabels , column_names , method )
+function [ MVdata , labels_new , MVtest , test_labels_new, column_names_new, print,f_ind ] = missingvalues( data , labels , test , testlabels , column_names , method )
 %MISSING VALUES Removes missing values from data
 %Usage:
 %   [MVdata,labels_new,MVtest,test_labels_new,column_names_new,print] = missingvalues(data,labels,test,testlabels,column_names,method)
@@ -36,6 +36,7 @@ if nargin < 5
     method = 'mean';
     disp('No method specified for MV handling, mean method selected.')
 end
+if(~strcmp(method,'removefeatures')), f_ind = 1:30; end
 
 switch method
     %----Option 1 - Replace for column mean----%
@@ -60,18 +61,7 @@ switch method
             MVtest(:,i) = auxtest;
         end
         
-    %----Option 3 - Replace for class mean----%
-%     case 'meanclass'
-%         for i=1:colnum
-%             aux1 = MVdata(labels==1,i);
-%             aux2 = MVdata(labels==2,i);
-%             aux1(isnan(aux1)) = nanmean(aux1);
-%             aux2(isnan(aux2)) = nanmean(aux2);
-%             MVdata(labels==1,i) = aux1;
-%             MVdata(labels==2,i) = aux2;
-%         end
-        
-    %----Option 4 - Remove entries with NaN----%
+    %----Option 3 - Remove entries with NaN----%
     case 'removeevents'
         i=rownum;
         ind = [];
@@ -95,7 +85,7 @@ switch method
         MVtest = MVtest(ind,:);
         test_labels_new = testlabels(ind);
         
-    %----Option 5 - Remove features with NaN----%
+    %----Option 4 - Remove features with NaN----%
     case 'removefeatures'
         i=colnum;
         ind = [];
@@ -111,6 +101,7 @@ switch method
         labels_new = labels;
         test_labels_new = testlabels;
         column_names_new = column_names(ind);
+        f_ind = ind;
 end
 
 fprintf('\n%d missing values successfully replaced/removed from train set.\n',nannum);

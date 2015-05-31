@@ -1,4 +1,4 @@
-function [ FSdata , column_names_new , selected_features, print ] = FS_kruskal( data , labels , column_names , threshold )
+function [ FSdata , column_names_new , selected_features, print] = FS_kruskal( data , labels , column_names , threshold )
 %KRUSKAL-WALLIS for Feature Selection
 %Usage:
 %   [FSdata,column_names_new,selected_features,print] = FS_kruskal(data,labels,column_names,threshold)
@@ -25,7 +25,6 @@ for i=1:colnum
 end
 
 [chi2_sort,chi2_ord] = sort(chi2,'descend');
-
 selected_features = sort(chi2_ord(1:threshold));
 
 FSdata = FSdata(:,chi2_ord(selected_features));

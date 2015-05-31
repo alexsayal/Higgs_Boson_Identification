@@ -33,7 +33,6 @@ disp(T);
 selected_features = sort(selected_features);
 column_names_new = column_names(selected_features);
 
-delete(gcp);
 disp('AUC method completed.')
 
 print = sprintf('AUC method completed.\n%d Features selected.',length(selected_features));

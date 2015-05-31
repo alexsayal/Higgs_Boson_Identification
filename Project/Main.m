@@ -55,8 +55,8 @@ tabulate(Ytest)
 %% Missing values - Train and Test
 method = {'mean','mode','removeevents','removefeatures'};
 
-[ MVXtrain , MVYtrain , MVXtest , MVYtest, MVcolumn_names ] ...
-    = missingvalues( Xtrain , Ytrain , Xtest , Ytest , column_names, method{3} );
+[ MVXtrain , MVYtrain , MVXtest , MVYtest, MVcolumn_names , ~,MVcolumn_indexes] ...
+    = missingvalues( Xtrain , Ytrain , Xtest , Ytest , column_names, method{4} );
 
 clear method;
 
@@ -107,6 +107,33 @@ switch option
 end
 
 clear option threshold;
+
+%% Feature Selection Comparison Graph
+x = ones(7,length(MVcolumn_indexes));
+x(1,:) = 1:length(MVcolumn_indexes);
+
+[~ , ~ , kruskal_f] = FS_kruskal( normtrain , MVYtrain , MVcolumn_names , 15 );
+[~ , ~ , corr_f1] = FS_corr( normtrain , MVYtrain , MVcolumn_names , 'feat' , 0.01);
+[~ , ~ , corr_f2] = FS_corr( normtrain , MVYtrain , MVcolumn_names , 'featlabel' , 0.03);
+[~ , ~ , mrmr_f] = FS_mRMR( normtrain , MVYtrain , MVcolumn_names , 15 );
+[~ , ~ , auc_f] = FS_AUC( normtrain , MVYtrain , MVcolumn_names , 0.55 );
+[~ , ~ , fisher_f] = FS_fisher(normtrain , MVYtrain , MVcolumn_names, 15 );
+
+x(2,kruskal_f) = 0;
+x(3,corr_f1) = 0;
+x(4,corr_f2) = 0;
+x(5,mrmr_f) = 0;
+x(6,auc_f) = 0;
+x(7,fisher_f) = 0;
+figure();
+colormap bone
+imagesc(x(1,:),1:6,x(2:7,:));
+title('Comparison of the features selected by the 6 methods')
+xlabel('Features');
+set(gca,'ygrid', 'on', 'gridlinestyle', '-', 'ycolor', 'k');
+set(gca, 'YTick', 1:6, 'YTickLabel', ...
+    {'Kruskal-Wallis','F Correlation','FL Correlation','mRMR','AUC','Fisher Score'},...
+    'XTick',x(1,:),'XTickLabel',num2cell(MVcolumn_indexes));
 
 %% Feature Reduction
 
