@@ -1,6 +1,6 @@
 # HIGGS BOSON IDENTIFICATION
 
-Kaggle Contest
+Kaggle Higgs Boson Machine Learning Challenge (https://www.kaggle.com/c/higgsboson).
 
 Pattern Recognition Course
 
