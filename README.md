@@ -16,6 +16,7 @@ Sara Oliveira, Biomedical Engineer MSc
 
 
 The project has two main files:
+
 	1) intro.fig
 		Runs the Graphical User Interface developed to perform all pattern recognition tasks.
 		The documentation for this interface can be accessed through the menu or by opening the file HELP.md.
@@ -25,6 +26,7 @@ The project has two main files:
 
 
 PROJECT FUNCTIONS:
+
 	1) Data Import
 		Uses function dataimport.m to read the higgs dataset and return matlab readable sets.
 
